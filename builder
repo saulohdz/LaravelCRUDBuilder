@@ -1,68 +1,16 @@
 #!/usr/bin/env php
 <?php
 //
-include  "readStructure.php";
+include  "CRUDBuilder/readStructure.php";
 define('APP_PATH','app/');
 define('RESOURCES_PATH','resources/');
 define('CONTROLLER_PATH',APP_PATH.'Http/Controllers/');
 define('VIEWS_PATH',RESOURCES_PATH.'views/');
+define('ROUTES_PATH','routes/');
 
 //Seccion de Variables
 $jsonConfig=null;
 
-function cls()
-{
-    print("\033[2J\033[;H");
-}
-
-function Logo(){
-echo "\n";
-echo "\n██╗  ██╗██████╗  ██████╗ ███████╗ ██████╗ ██╗     ██╗   ██╗████████╗██╗ ██████╗ ███╗   ██╗███████╗";
-echo "\n██║  ██║██╔══██╗██╔════╝ ██╔════╝██╔═══██╗██║     ██║   ██║╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝";
-echo "\n███████║██████╔╝██║  ███╗███████╗██║   ██║██║     ██║   ██║   ██║   ██║██║   ██║██╔██╗ ██║███████╗";
-echo "\n██╔══██║██╔══██╗██║   ██║╚════██║██║   ██║██║     ██║   ██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║";
-echo "\n██║  ██║██║  ██║╚██████╔╝███████║╚██████╔╝███████╗╚██████╔╝   ██║   ██║╚██████╔╝██║ ╚████║███████║";
-echo "\n╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝";
-echo "\n";
-echo "\n";
-echo "\n LARAVEL 7.0";
-echo "\n   ____ ____  _   _ ____                                    _             ";
-echo "\n  / ___|  _ \| | | |  _ \    __ _  ___ _ __   ___ _ __ __ _| |_ ___  _ __ ";
-echo "\n | |   | |_) | | | | | | |  / _` |/ _ \ '_ \ / _ \ '__/ _` | __/ _ \| '__|";
-echo "\n | |___|  _ <| |_| | |_| | | (_| |  __/ | | |  __/ | | (_| | || (_) | |   ";
-echo "\n  \____|_| \_\\\\___/|____/   \__, |\___|_| |_|\___|_|  \__,_|\__\___/|_|   ";
-echo "\n                            |___/                                         ";
-echo "\n";
-echo "\n ";
-
-}
-
-function loadJsonConfig($filename){
-	/*
-	echo "\nCargar archivo JSON con configuracion ? (s,N)";
-	$loadjsonfile = stream_get_line(STDIN, 1024, PHP_EOL);
-	if (strtoupper($loadjsonfile)=='S'){
-		echo "\nTeclea la ubicación del archivo JSON unto con el nombre :";
-		$dir=readline();
-		echo "\n Leyendo Archivo JSON desde $dir ";
-		if (file_exists($dir)){
-	 		$jsonConfig=file_get_contents($dir);
-   		 }
-    	else{
-    	echo "\nEl archivo no existe o no esta en la ubicacion";
-    	exit(1);
-    	}
-	}
-	*/
-		if (file_exists($dir)){
-	 		$jsonConfig=file_get_contents($dir);
-   		 }
-    	else{
-    		echo "\nEl archivo no existe o no esta en la ubicacion";
-    		exit(1);
-    	}
-
-}
 
 $parameters=array();
 foreach($argv as $arg){
@@ -96,6 +44,68 @@ function parse($parameters){
   }
 }
 
+function cls()
+{
+    print("\033[2J\033[;H");
+}
+
+function Logo(){
+echo "\n";
+echo "\n██╗  ██╗██████╗  ██████╗ ███████╗ ██████╗ ██╗     ██╗   ██╗████████╗██╗ ██████╗ ███╗   ██╗███████╗";
+echo "\n██║  ██║██╔══██╗██╔════╝ ██╔════╝██╔═══██╗██║     ██║   ██║╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝";
+echo "\n███████║██████╔╝██║  ███╗███████╗██║   ██║██║     ██║   ██║   ██║   ██║██║   ██║██╔██╗ ██║███████╗";
+echo "\n██╔══██║██╔══██╗██║   ██║╚════██║██║   ██║██║     ██║   ██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║";
+echo "\n██║  ██║██║  ██║╚██████╔╝███████║╚██████╔╝███████╗╚██████╔╝   ██║   ██║╚██████╔╝██║ ╚████║███████║";
+echo "\n╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝";
+echo "\n";
+echo "\n";
+echo "\n LARAVEL 7.0";
+echo "\n   ____ ____  _   _ ____                                    _             ";
+echo "\n  / ___|  _ \| | | |  _ \    __ _  ___ _ __   ___ _ __ __ _| |_ ___  _ __ ";
+echo "\n | |   | |_) | | | | | | |  / _` |/ _ \ '_ \ / _ \ '__/ _` | __/ _ \| '__|";
+echo "\n | |___|  _ <| |_| | |_| | | (_| |  __/ | | |  __/ | | (_| | || (_) | |   ";
+echo "\n  \____|_| \_\\\\___/|____/   \__, |\___|_| |_|\___|_|  \__,_|\__\___/|_|   ";
+echo "\n                            |___/                                         ";
+echo "\n";
+echo "\n ";
+
+}
+
+function loadJsonConfig($filename){
+  /*
+  echo "\nCargar archivo JSON con configuracion ? (s,N)";
+  $loadjsonfile = stream_get_line(STDIN, 1024, PHP_EOL);
+  if (strtoupper($loadjsonfile)=='S'){
+    echo "\nTeclea la ubicación del archivo JSON unto con el nombre :";
+    $dir=readline();
+    echo "\n Leyendo Archivo JSON desde $dir ";
+    if (file_exists($dir)){
+      $jsonConfig=file_get_contents($dir);
+       }
+      else{
+      echo "\nEl archivo no existe o no esta en la ubicacion";
+      exit(1);
+      }
+  }
+  */
+    if (file_exists($dir)){
+      $jsonConfig=file_get_contents($dir);
+       }
+      else{
+        echo "\nEl archivo no existe o no esta en la ubicacion";
+        exit(1);
+      }
+
+}
+
+function GenRoutesWEB($ModelName){
+  $code="\nRoute::get('/".$ModelName."','".$ModelName."Controller@index');";
+  $code="\nRoute::post('/".$ModelName."','".$ModelName."Controller@store');";
+  $code="\nRoute::get('/".$ModelName."/create','".$ModelName."Controller@create');";
+  $code="\nRoute::put('/".$ModelName."/edit/{id}','".$ModelName."Controller@update');";
+  $code="\nRoute::delete('/".$ModelName."/delete/{id}','".$ModelName."Controller@destroy');";
+  file_put_contents(ROUTES_PATH."web.php", $code, FILE_APPEND | LOCK_EX);
+}
 
 function GenControler($ControllerName){
  $code = "\n<?php";
@@ -456,6 +466,7 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
             }
 
   }
+  GenRoutesWEB($tbl->TableName);
    	}
    	//echo "\n-----------------------------------------------------";
 
