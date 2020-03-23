@@ -36,7 +36,7 @@ HELP
         tables=| All | table 1,table 2,...,table n|  Tables what you want generate                          
         make=|controller|,|model|,|view|,route| generate Controllers, Models, View and/or routes of tables 
 
-
+Note: Put This file in new Laravel folder project
 
 	file.json structure :
 	{
