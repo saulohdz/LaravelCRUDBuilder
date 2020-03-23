@@ -14,9 +14,9 @@ $jsonConfig=null;
 
 $parameters=array();
 foreach($argv as $arg){
-	if (strpos($arg, "=")){
-	 $parameters[]=explode("=",$arg);
-	}
+  if (strpos($arg, "=")){
+   $parameters[]=explode("=",$arg);
+  }
     else{
      $parameters[]=$arg;
     }
@@ -27,19 +27,19 @@ cls();
 logo();
 $Comandos=array();
 function parse($parameters){
-	global $Comandos;
+  global $Comandos;
   foreach ($parameters as $param) {
-  	if (is_array($param) ){
-  		//$subCommand=explode("=",$param);
-  		$id=$param[0];
-  		$val=explode(",",$param[1]);
-  		$Comandos[$id]=$val;
+    if (is_array($param) ){
+      //$subCommand=explode("=",$param);
+      $id=$param[0];
+      $val=explode(",",$param[1]);
+      $Comandos[$id]=$val;
         //print_r($id);
         //print_r($val);
-  	}
+    }
   else{
-  	  $Comandos[$param];
-  	  echo "\n Comando :".$param;
+      $Comandos[$param];
+      echo "\n Comando :".$param;
   }
   }
 }
@@ -99,12 +99,14 @@ function loadJsonConfig($filename){
 }
 
 function GenRoutesWEB($ModelName){
-  $code="\nRoute::get('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@index');";
-  $code="\nRoute::post('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@store');";
-  $code="\nRoute::get('/".ucfirst(str_replace("_","",$ModelName))."/create','".ucfirst(str_replace("_","",$ModelName))."Controller@create');";
-  $code="\nRoute::put('/".ucfirst(str_replace("_","",$ModelName))."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update');";
-  $code="\nRoute::delete('/".ucfirst(str_replace("_","",$ModelName))."/delete/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
+  $code = "\n // RUTAS WEB DEL MODELO ".$ModelName;
+  $code .= "\nRoute::get('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@index');";
+  $code .= "\nRoute::post('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@store');";
+  $code .= "\nRoute::get('/".ucfirst(str_replace("_","",$ModelName))."/create','".ucfirst(str_replace("_","",$ModelName))."Controller@create');";
+  $code .= "\nRoute::put('/".ucfirst(str_replace("_","",$ModelName))."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update');";
+  $code .= "\nRoute::delete('/".ucfirst(str_replace("_","",$ModelName))."/delete/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
   file_put_contents(ROUTES_PATH."web.php", $code, FILE_APPEND | LOCK_EX);
+
 }
 
 function GenControler($ControllerName){
@@ -194,7 +196,7 @@ function GenControler($ControllerName){
  $code .="       //\n";
  $code .="   }\n";
  $code .="}\n";
- $code .="	\n";
+ $code .="  \n";
  return $code;
 }
 
@@ -394,7 +396,7 @@ if (count($Comandos)==0){
   exit(2);
 }
 elseif(isset($Comandos["configfile"][0])){
-	echo "\n ".$Comandos["configfile"][0];
+  echo "\n ".$Comandos["configfile"][0];
    $jsonConfig=json_decode(file_get_contents($Comandos["configfile"][0],FILE_USE_INCLUDE_PATH));
 }
 else{
@@ -413,13 +415,13 @@ else{
 
 echo "\n Comenzando el proceso de Generación de codigo.....";
    foreach($jsonConfig->Tables as $tbl){
-   	foreach ($Comandos["make"] as $mk) {
-   		if (in_array($tbl->TableName,$Comandos["tables"]) and strtoupper($Comandos["tables"][0])!='ALL'){
+    foreach ($Comandos["make"] as $mk) {
+      if (in_array($tbl->TableName,$Comandos["tables"]) and strtoupper($Comandos["tables"][0])!='ALL'){
         if (strtoupper($mk)=='CONTROLLER'){
-   		     echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-   		     $data = GenControler($tbl->TableName);
-      		 $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
-		      fwrite($myfile, $data);
+           echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
+           $data = GenControler($tbl->TableName);
+           $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
+          fwrite($myfile, $data);
           fclose($myfile);
         }
         if (strtoupper($mk)=='MODEL'){
@@ -442,22 +444,22 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
       }
   else{
         if (strtoupper($mk)=='CONTROLLER'){
-   		     echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-   		     $data = GenControler($tbl->TableName);
-      		 $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
-		      fwrite($myfile, $data);
+           echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
+           $data = GenControler($tbl->TableName);
+           $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
+          fwrite($myfile, $data);
           fclose($myfile);
         }
         if (strtoupper($mk)=='MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenModel($tbl->TableName);
-           $myfile = fopen("app/".ucfirststr_replace("_","",($tbl->TableName)).'.php', "w") or die("Unable to open file!");
+           $myfile = fopen("app/".ucfirst(str_replace("_","",$tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
        if (strtoupper($mk)=='VIEW'){
                 echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-                mkdir('resources/views/'.$tbl->TableName);
+                mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
 
                 $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
@@ -466,10 +468,11 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
             }
 
   }
-  GenRoutesWEB($tbl->TableName);
+  
+    }
+GenRoutesWEB($tbl->TableName);
+  echo "\n Agregando Routas del Modelo ".$tbl->TableName;
   echo "\n-----------------------------------------------------------------";
-   	}
-
 }
 
 sign();
