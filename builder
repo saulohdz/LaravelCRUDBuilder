@@ -109,98 +109,117 @@ function GenRoutesWEB($ModelName){
 
 }
 
-function GenControler($ControllerName){
+function GenController($ControllerName,$fields){
  $code = "\n<?php";
  $code .= "\n";
  $code .="namespace App\Http\Controllers;\n";
  $code .="\n";
- $code .="use App\\".ucfirst(str_replace("_","",$ControllerName)).";\n";
- $code .="use Illuminate\Http\Request;\n";
+ $code .="\n use App\\".ucfirst(str_replace("_","",$ControllerName)).";";
+ $code .="\n use Illuminate\Http\Request;";
  $code .="\n";
- $code .="class ".ucfirst(str_replace("_","",$ControllerName))."Controller extends Controller\n";
- $code .="{\n";
- $code .="   /**\n";
- $code .="    * Display a listing of the resource.\n";
- $code .="    *\n";
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function index()\n";
- $code .="   {\n";
- $code .="    \$".ucfirst(str_replace("_","",$ControllerName))."s = ".ucfirst(str_replace("_","",$ControllerName))."::paginate(10);\n";
- $code .="       return wiew('".$ControllerName.".index')->with(['".ucfirst(str_replace("_","",$ControllerName))."s',\$".ucfirst(str_replace("_","",$ControllerName))."s]);\n";
- $code .="   }\n";
+ $code .="\nclass ".ucfirst(str_replace("_","",$ControllerName))."Controller extends Controller";
+ $code .="\n{";
+ $code .="\n   /**";
+ $code .="\n    * Display a listing of the resource.";
+ $code .="\n    *";
+ $code .="\n    * @return \Illuminate\Http\Response";
+ $code .="\n    */\n";
+ $code .="\n   public function index()";
+ $code .="\n   {";
+ foreach($fields as $fld){
+   if ($fld->FormType=='Relation'){
+      $code .="\n    \$".ucfirst(str_replace("_","",$fld-FieldName))."S = ".ucfirst(str_replace("_","",$$fld->FieldName))."::all()"; 
+   } 
+ }
+ $code .="\n    \$".ucfirst(str_replace("_","",$ControllerName))." = ".ucfirst(str_replace("_","",$ControllerName))."::paginate(10);";
+ $code .="\n       return wiew('".str_replace("_","",$ControllerName).".index')->with(['".ucfirst(str_replace("_","",$ControllerName))."',\$".ucfirst(str_replace("_","",$ControllerName))."]);";
+ $code .="\n   }";
  $code .="\n";
- $code .="   /**\n";
- $code .="    * Show the form for creating a new resource.\n";
- $code .="    *\n";
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function create()\n";
- $code .="   {\n";
- $code .="       \n";
- $code .="   }\n";
+ $code .="\n   /**";
+ $code .="\n    * Show the form for creating a new resource.";
+ $code .="\n    *\n";
+ $code .="\n    * @return \Illuminate\Http\Response";
+ $code .="\n    */";
+ $code .="\n   public function create()";
+ $code .="\n   {";
+ foreach($fields as $fld){
+   if ($fld->FormType=='Relation'){
+      $code .="\n    \$".ucfirst(str_replace("_","",$fld-FieldName))."S = ".ucfirst(str_replace("_","",$$fld->FieldName))."::all()"; 
+   } 
+ } 
+ $code .="\n     return view('".str_replace("_","",$ControllerName).".create');";
+ $code .="\n   }";
  $code .="\n";
- $code .="   /**\n";
- $code .="    * Store a newly created resource in storage.\n";
- $code .="    *\n";
- $code .="    * @param  \Illuminate\Http\Request  \$request\n";
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function store(Request \$request)\n";
- $code .="   {\n";
- $code .="       //\n";
- $code .="   }\n";
+ $code .="\n   /**";
+ $code .="\n    * Store a newly created resource in storage.";
+ $code .="\n    *\n";
+ $code .="\n    * @param  \Illuminate\Http\Request  \$request";
+ $code .="\n    * @return \Illuminate\Http\Response";
+ $code .="\n    */";
+ $code .="\n   public function store(Request \$request)";
+ $code .="\n   {";
+ $code .="\n    \$".ucfirst(str_replace("_","",$ControllerName))."::create(\$request->all());";
+ $code .="\n   }";
  $code .="\n";
- $code .="   /**\n";
- $code .="    * Display the specified resource.\n";
- $code .="    *\n";
- $code .="    * @param  \App\ ".str_replace("_","",$ControllerName)."\n";
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function show(\$id)\n";
- $code .="   {\n";
- $code .="       //\n";
- $code .="   }\n";
+ $code .="\n   /**";
+ $code .="\n    * Display the specified resource.";
+ $code .="\n    *";
+ $code .="\n    * @param  \App\ ".str_replace("_","",$ControllerName)."";
+ $code .="\n    * @return \Illuminate\Http\Response";
+ $code .="\n    */";
+ $code .="\n   public function show(\$id)";
+ $code .="\n   {";
+ $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
+ $code .="\n      return $".$ControllerName.";";
+ $code .="\n   }";
  $code .="\n";
- $code .="   /**\n";
- $code .="    * Show the form for editing the specified resource.\n";
- $code .="    *\n";
- $code .="    * @param  \App\ ".str_replace("_","",$ControllerName).'  \n';
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function edit(\$id)\n";
- $code .="   {\n";
- $code .="       //\n";
- $code .="   }\n";
+ $code .="\n   /**";
+ $code .="\n    * Show the form for editing the specified resource.";
+ $code .="\n    *";
+ $code .="\n    * @param  \App\ ".str_replace("_","",$ControllerName);
+ $code .="\n    * @return \Illuminate\Http\Response";
+ $code .="\n    */";
+ $code .="\n   public function edit(\$id)";
+ $code .="\n   {";
+ foreach($fields as $fld){
+   if ($fld->FormType=='Relation'){
+      $code .="\n    \$".ucfirst(str_replace("_","",$fld-FieldName))."S = ".ucfirst(str_replace("_","",$$fld->FieldName))."::all()"; 
+   } 
+ } 
+ $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
+ $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$.".$ControllerName."]);";
+ $code .="\n   }";
  $code .="\n";
- $code .="   /**\n";
- $code .="    * Update the specified resource in storage.\n";
- $code .="    *\n";
- $code .="    * @param  \Illuminate\Http\Request  \$request\n";
- $code .="    * @param  \App\ ".str_replace("_","",$ControllerName)."\n";
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function update(Request \$request, \$id)\n";
- $code .="   {\n";
- $code .="       //\n";
- $code .="   }\n";
+ $code .="\n   /*";
+ $code .="\n    * Update the specified resource in storage";
+ $code .="\n    *";
+ $code .="\n    * @param  \Illuminate\Http\Request  \$request";
+ $code .="\n    * @param  \App\ ".str_replace("_","",$ControllerName);
+ $code .="\n    * @return \Illuminate\Http\Response";
+ $code .="\n    */\n";
+ $code .="\n   public function update(Request \$request, \$id)";
+ $code .="\n   {";
+ $code .="\n     \$".ucfirst(str_replace("_","",$ControllerName))."::update(\$request->all());";
+ $code .="\n   }";
  $code .="\n";
- $code .="   /**\n";
- $code .="    * Remove the specified resource from storage.\n";
- $code .="    *\n";
- $code .="    * @param  \App\ ".str_replace("_","",$ControllerName)."\n";
- $code .="    * @return \Illuminate\Http\Response\n";
- $code .="    */\n";
- $code .="   public function destroy(\$id)\n";
- $code .="   {\n";
- $code .="       //\n";
- $code .="   }\n";
- $code .="}\n";
+ $code .="\n   /**";
+ $code .="\n    * Remove the specified resource from storage.";
+ $code .="\n    *\n";
+ $code .="\n    * @param  \App\ ".str_replace("_","",$ControllerName);
+ $code .="\n    * @return \Illuminate\Http\Response\n";
+ $code .="\n    */";
+ $code .="\n   public function destroy(\$id)";
+ $code .="\n   {";
+ $code .="\n      \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
+ $code .="\n       \$".$ControllerName."->delete();";
+ $code .="\n       return view('".str_replace("_","",$ControllerName).".index');";
+ $code .="\n   }";
+ $code .="\n}";
  $code .="  \n";
  return $code;
 }
 
-function genModel($ModelName)
+function genModel($ModelName,$fields)
 {
     $code ="\n<?php";
     $code .="\n";
@@ -210,6 +229,13 @@ function genModel($ModelName)
     $code .="\n";
     $code .="\nclass " . ucfirst(str_replace("_","",$ModelName)) . " extends Model";
     $code .="\n{";
+    foreach($fields as $fld){
+    if ($fld->FormType=='Relation'){
+      $code .= "\n public funcion REL_".$ModelName."(){";      
+      $code .= "\n    return hasOne('\\App\\".$fld->TableRel."','".$fld->FieldRel."','".$ModelName."->id')"; 
+      $code .="\n }\n";
+      } 
+    }    
     $code .="\n    protected \$table='".$ModelName."';";
     $code .="\n}";
     $code .="\n}";
@@ -389,7 +415,7 @@ echo "\n                     ,&@&@&&##(((((((((########%%%&&&@@&";
 echo "\n                     /@&%%###((################%%%%&@@@@%  ";
 echo "\n                    .&&&%%####((((/((((((((###%%%%%%&@@@&.";
 echo "\n                     &&&%&##&&@&@&&&&#((#&&&%%#%%&&&%%@@% ";
-echo "\n                     /&&&((%#%%&%&&%###(#%&&/#@#&&%%%%%@(";
+echo "\n                     /&&&((%#O&%&&%###(#%&&/#@#&O%%%%%@(";
 echo "\n                     *&&#(###############%&%%#%%%%%%%%%&%@";
 echo "\n                    ,((%#(#(((((((((((((##%%########%%%&%&";
 echo "\n                     (/%#(((((((((##(((/(%##&#(######%%#@";
@@ -419,6 +445,8 @@ function help(){
     echo "\n ------------------------------------------------";
     echo "\n Command :  php builder |parameter #1 parameter #2 parameter #3|";
     echo "\n Paramaters : ";
+    echo "\n        GenStructure=file.json  -> genera el archivo JSON de la estructura de la BD, este comando se ejecuta solo, ";
+    echo "\n         no se puede ejecutar junto con otros comandos";
     echo "\n        configfile=file.json file with the structure en database";
     echo "\n        tables=| All | table 1,table 2,...,table n|  Tables what you want generate";
     echo "\n        make=|controller|,|model|,|view|,route| generate Controllers, Models, View and/or routes of tables\n";
@@ -442,22 +470,44 @@ parse($parameters);
 if (count($Comandos)==0){
   help();
   sign();
-  exit(2);
+  exit(0);
 }
 elseif(isset($Comandos["configfile"][0])){
   echo "\n ".$Comandos["configfile"][0];
    $jsonConfig=json_decode(file_get_contents($Comandos["configfile"][0],FILE_USE_INCLUDE_PATH));
 }
 else{
-     $dbconf = ENV_Parser(file_get_contents(".env"));
-    echo "\n No se encontro archivo de configuracion de la estructura de la base de datos....";
-    echo "\n Generando estructura automaticamente de la Base de datos ".$dbconf["DB_DATABASE"]." en ".dbconf["DB_HOST"];
-    echo "\n Leyendo informacion de el archico .env ....";
+    
+  if ($Comandos['GenStructure']!="" || $Comandos['genStructure']!="" || $Comandos['genstructure']!=""){
+    $dbconf = ENV_Parser(file_get_contents(".env"));
+    //print_r($Comandos);
     $db     = new readStructure();
     $db->setDb($dbconf["DB_DATABASE"]);
     $db->setSrv($dbconf["DB_HOST"]);
     $db->setUsr($dbconf["DB_USERNAME"]);
     $db->setPass($dbconf["DB_PASSWORD"]);
+    echo "\n ** Generador de la Estructura de la BD JSON **";
+    echo "\n Generando estructura automaticamente de la Base de datos ".$dbconf["DB_DATABASE"]." en ".$dbconf["DB_HOST"];
+    sleep(2);
+    $jsonConfig = $db->readStructure();
+    //file_put_contents($Comandos["GenStructure"][0],json_encode($jsonConfig));
+    $myfile = fopen($Comandos["GenStructure"][0],"w");
+    fwrite($myfile, $jsonConfig);
+    fclose($myfile);
+    echo "\n Estructura de la BD generada satisfactoriamente en archivo ".$Comandos["GenStructure"][0];
+    sign();
+    exit(0);
+  }
+
+     $dbconf = ENV_Parser(file_get_contents(".env"));
+    echo "\n No se encontro archivo de configuracion de la estructura de la base de datos....";
+    $db     = new readStructure();
+    $db->setDb($dbconf["DB_DATABASE"]);
+    $db->setSrv($dbconf["DB_HOST"]);
+    $db->setUsr($dbconf["DB_USERNAME"]);
+    $db->setPass($dbconf["DB_PASSWORD"]);
+    echo "\n Generando estructura automaticamente de la Base de datos ".$dbconf["DB_DATABASE"]." en ".$dbconf["DB_HOST"];
+    echo "\n Leyendo informacion de el archico .env ....";
     $jsonConfig = json_decode($db->readStructure());
     //print_r($jsonConfig);
 }
@@ -470,14 +520,14 @@ else{
       if (in_array($tbl->TableName,$Comandos["tables"]) and strtoupper($Comandos["tables"][0])!='ALL'){
         if (strtoupper($mk)=='CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-           $data = GenControler($tbl->TableName);
+           $data = GenController($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
         if (strtoupper($mk)=='MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-           $data = GenModel($tbl->TableName);
+           $data = GenModel($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/".ucfirst(str_replace("_","",$tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
@@ -488,13 +538,18 @@ else{
                  mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
                }
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
+                //INDEX
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/index.blade.php', "w") or die("Unable to open file!");
+                fwrite($myfile, $data);
+                fclose($myfile);
                 //EDIT
-                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
+                $data = GenViewCreate($tbl->TableName,$tbl->fields);
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/edit.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
                 //CREATE
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
-                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/create.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);            }
         if (strtoupper($mk)=='ROUTE'){
@@ -505,14 +560,14 @@ else{
   else{
         if (strtoupper($mk)=='CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-           $data = GenControler($tbl->TableName);
+           $data = GenController($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
         if (strtoupper($mk)=='MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-           $data = GenModel($tbl->TableName);
+           $data = GenModel($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/".ucfirst(str_replace("_","",$tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
@@ -522,14 +577,19 @@ else{
                 if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
                  mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
                }
-                //EDIT
+                //index
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
-                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/index.blade.php', "w") or die("Unable to open file!");
+                fwrite($myfile, $data);
+                fclose($myfile);
+                //EDIT
+                $data = GenViewEdit($tbl->TableName,$tbl->fields);
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/edit.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
                 //CREATE
                 $data = GenViewCreate($tbl->TableName,$tbl->fields);
-                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/create.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
             }
