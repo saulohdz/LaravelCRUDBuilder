@@ -217,7 +217,8 @@ function genModel($ModelName)
 }
 
 function GenViewIndex($ModelName,$fields){
-    $code ="\n @extends('layouts.admin')";
+    $code  ="\n <?php";
+    $code .="\n @extends('layouts.admin')";
     $code .="\n @section('contenido')\n";
     $code .="\n <table class=\"table table-bordered table-striped table-sm\">";
     $code .="\n        <thead>";
@@ -229,21 +230,21 @@ function GenViewIndex($ModelName,$fields){
     $code .="\n        </tr>";
     $code .="\n      </thead>";
     $code .="\n        <tbody>";
-    $code .="\n    @foreach(\$".str_replace("_","",$ModelName)." as \$row)";
+    $code .="\n    @foreach(\$".ucfirst(str_replace("_","",$ModelName))." as \$row)";
     $code .="\n            <tr>";
     $code .="\n                <td>";
-    $code .="\n                    <a href=\"/encuesta/edit/{{\$".str_replace("_","",$ModelName)."->id}}\" title=\"Editar ".str_replace("_","",$ModelName)."\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
-    $code .="\n                    <a href=\"#\" class=\"btn btn-xs btn-outline-danger\" title=\"Borrar ".$ModelName."\" onclick=\"delete".str_replace("_","",$ModelName)."({{\$".str_replace("_","",$ModelName)."->id}})\"><i class=\"fas fa-trash-alt\"></i></a>";
+    $code .="\n                    <a href=\"/encuesta/edit/{{\$row->id}}\" title=\"Editar ".str_replace("_","",$ModelName)."\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
+    $code .="\n                    <a href=\"#\" class=\"btn btn-xs btn-outline-danger\" title=\"Borrar ".$ModelName."\" onclick=\"delete".str_replace("_","",$ModelName)."({{\$row->id}})\"><i class=\"fas fa-trash-alt\"></i></a>";
     $code .="\n                </td>";
     foreach ($fields as $fld) {
-        $code .="\n                <td>{{\$".str_replace("_","",$ModelName)."->".$fld->FieldName."}}</td>";
+        $code .="\n                <td>{{\$row->".$fld->FieldName."}}</td>";
     }
     $code .="\n           </tr>";
     $code .="\n    @endforeach";
     $code .="\n        </tbody>";
     $code .="\n    </table>";
     $code .="\n    <script>";
-    $code .="\nfunction delete".str_replace("_","",$ModelName)."(id){";
+    $code .="\nfunction delete".ucfirst(str_replace("_","",$ModelName))."(id){";
     $code .="\n            Swal.fire({";
     $code .="\n                title: 'Seguro de borrar encuesta?',";
     $code .="\n                text: 'No podrá revertir eso!',";
@@ -272,7 +273,8 @@ function GenViewIndex($ModelName,$fields){
 }
 
 function GenViewEdit($ModelName,$fields){
-$code ="\n@extends('layout.admin')";
+$code  = "\n<?php";
+$code .="\n@extends('layout.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
 $code .="\n<div class=\"col-md-12 margin-tb\">";
@@ -294,7 +296,7 @@ $code .="\n    @endforeach";
 $code .="\n</ul>";
 $code .="\n</div>";
 $code .="\n@endif";
-$code .="\n<form action=\"{{ route('".$ModelName.".update',\$".ucfirst($ModelName)."->id) }}\" method=\"POST\">";
+$code .="\n<form action=\"{{ route('".$ModelName.".update',\$".ucfirst(str_replace("_","",$ModelName))."->id) }}\" method=\"POST\">";
 $code .="\n@csrf";
 $code .="\n@method('PUT')";
 $code .="\n<div class=\"row\">";
@@ -304,7 +306,7 @@ foreach($fields as $fld) {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<div class=\"col-sm-2\">";
-        $code .= "\n<input type=\"text\" name=\"blog_title\" value=\"{{ \$" . $ModelName . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"Name\">";
+        $code .= "\n<input type=\"text\" name=\"blog_title\" value=\"{{ \$" . ucfirst(str_replace("_","",$ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"Name\">";
         $code .= "\n</div>";
         $code .="\n</div>";
     }
@@ -372,7 +374,7 @@ function help(){
     echo "\n Paramaters : ";
     echo "\n        configfile=file.json file with the structure en database";
     echo "\n        tables=| All | table 1,table 2,...,table n|  Tables what you want generate";
-    echo "\n        make=|controller|,|model|,|view| generate Controllers, Models or View of tables\n";
+    echo "\n        make=|controller|,|model|,|view|,route| generate Controllers, Models, View and/or routes of tables\n";
 }
 
 
@@ -400,10 +402,10 @@ elseif(isset($Comandos["configfile"][0])){
    $jsonConfig=json_decode(file_get_contents($Comandos["configfile"][0],FILE_USE_INCLUDE_PATH));
 }
 else{
+     $dbconf = ENV_Parser(file_get_contents(".env"));
     echo "\n No se encontro archivo de configuracion de la estructura de la base de datos....";
-    echo "\n Generando estructura automaticamente ... de";
+    echo "\n Generando estructura automaticamente de la Base de datos ".$dbconf["DB_DATABASE"]." en ".dbconf["DB_HOST"];
     echo "\n Leyendo informacion de el archico .env ....";
-    $dbconf = ENV_Parser(file_get_contents(".env"));
     $db     = new readStructure();
     $db->setDb($dbconf["DB_DATABASE"]);
     $db->setSrv($dbconf["DB_HOST"]);
@@ -413,8 +415,10 @@ else{
     //print_r($jsonConfig);
 }
 
-echo "\n Comenzando el proceso de Generación de codigo.....";
+  echo "\n Comenzando el proceso de Generación de codigo.....";
+   sleep(3);
    foreach($jsonConfig->Tables as $tbl){
+    sleep(2);
     foreach ($Comandos["make"] as $mk) {
       if (in_array($tbl->TableName,$Comandos["tables"]) and strtoupper($Comandos["tables"][0])!='ALL'){
         if (strtoupper($mk)=='CONTROLLER'){
@@ -432,7 +436,8 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
           fclose($myfile);
         }
        if (strtoupper($mk)=='VIEW'){
-                echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
+                echo "\n Generando ".ROUTEst($mk)." de la Tabla ".$tbl->TableName;
+
                 mkdir('resources/views/'.$tbl->TableName);
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
 
@@ -440,8 +445,11 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
                 fwrite($myfile, $data);
                 fclose($myfile);
             }
-
+        if (strtoupper($mk)=='ROUTE'){
+          GenRoutesWEB($tbl->TableName);
+          echo "\n Agregando Routas del Modelo ".$tbl->TableName;
       }
+    }
   else{
         if (strtoupper($mk)=='CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
@@ -459,20 +467,24 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
         }
        if (strtoupper($mk)=='VIEW'){
                 echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
-                mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
+                if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
+                 mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
+               }
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
 
                 $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
             }
+        if (strtoupper($mk)=='ROUTE'){
+          GenRoutesWEB($tbl->TableName);
+          echo "\n Agregando Routas del Modelo ".$tbl->TableName;
+      }            
 
   }
   
     }
-GenRoutesWEB($tbl->TableName);
-  echo "\n Agregando Routas del Modelo ".$tbl->TableName;
-  echo "\n-----------------------------------------------------------------";
+  
 }
 
 sign();
