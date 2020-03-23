@@ -321,6 +321,53 @@ return  $code;
 }
 
 
+function GenViewCreate($ModelName,$fields){
+$code  = "\n<?php";
+$code .="\n@extends('layout.admin')";
+$code .="\n@section('contenido')";
+$code .="\n<div class=\"row\">";
+$code .="\n<div class=\"col-md-12 margin-tb\">";
+$code .="\n<div class=\"pull-left\">";
+$code .="\n<h2>Editar ".$ModelName."</h2>";
+$code .="\n</div>";
+$code .="\n<div class=\"pull-right\">";
+$code .="\n<a class=\"btn btn-primary\" href=\"{{ route('".$ModelName.".index') }}\"> Regresar</a>";
+$code .="\n</div>";
+$code .="\n</div>";
+$code .="\n</div>";
+$code .="\n@if (\$errors->any())";
+$code .="\n<div class=\"alert alert-danger\">";
+$code .="\n<strong>Whoops!</strong> Hay error en loa entrada<br><br>";
+$code .="\n<ul>";
+$code .="\n    @foreach (\$errors->all() as \$error)";
+$code .="\n<li>\{\{ \$error \}\}</li>";
+$code .="\n    @endforeach";
+$code .="\n</ul>";
+$code .="\n</div>";
+$code .="\n@endif";
+$code .="\n<form action=\"{{ route('".$ModelName.".store',\$".ucfirst(str_replace("_","",$ModelName))."->id) }}\" method=\"POST\">";
+$code .="\n@csrf";
+$code .="\n";
+$code .="\n<div class=\"row\">";
+foreach($fields as $fld) {
+    //if ($fld->FormType="Text")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<div class=\"col-sm-2\">";
+        $code .= "\n<input type=\"text\" name=\"blog_title\" value=\"{{ \$" . ucfirst(str_replace("_","",$ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"Name\">";
+        $code .= "\n</div>";
+        $code .="\n</div>";
+    }
+}
+
+$code .="\n<button type=\"submit\" class=\"btn btn-primary\">Submit</button>";
+$code .="\n</div>";
+$code .="\n</div>";
+$code .="\n</form>";
+$code .="\n@endsection";
+return  $code;
+}
 
 function sign(){
 echo "\n---------------------------------------------------------------------";
@@ -437,14 +484,19 @@ else{
         }
        if (strtoupper($mk)=='VIEW'){
                 echo "\n Generando ".ROUTEst($mk)." de la Tabla ".$tbl->TableName;
-
-                mkdir('resources/views/'.$tbl->TableName);
+                if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
+                 mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
+               }
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
-
+                //EDIT
                 $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
-            }
+                //CREATE
+                $data = GenViewIndex($tbl->TableName,$tbl->fields);
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
+                fwrite($myfile, $data);
+                fclose($myfile);            }
         if (strtoupper($mk)=='ROUTE'){
           GenRoutesWEB($tbl->TableName);
           echo "\n Agregando Routas del Modelo ".$tbl->TableName;
@@ -470,8 +522,13 @@ else{
                 if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
                  mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
                }
+                //EDIT
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
-
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
+                fwrite($myfile, $data);
+                fclose($myfile);
+                //CREATE
+                $data = GenViewCreate($tbl->TableName,$tbl->fields);
                 $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
