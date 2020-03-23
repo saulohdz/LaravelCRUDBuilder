@@ -100,10 +100,10 @@ function loadJsonConfig($filename){
 
 function GenRoutesWEB($ModelName){
   $code="\nRoute::get('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@index');";
-  $code="\nRoute::post('/".$ModelName."','".$ucfirst(str_replace("_","",$ModelName))."Controller@store');";
-  $code="\nRoute::get('/".$ucfirst(str_replace("_","",$ModelName))."/create','".$ucfirst(str_replace("_","",$ModelName))."Controller@create');";
-  $code="\nRoute::put('/".$ucfirst(str_replace("_","",$ModelName))."/edit/{id}','".$ucfirst(str_replace("_","",$ModelName))."Controller@update');";
-  $code="\nRoute::delete('/".$ucfirst(str_replace("_","",$ModelName))."/delete/{id}','".$ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
+  $code="\nRoute::post('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@store');";
+  $code="\nRoute::get('/".ucfirst(str_replace("_","",$ModelName))."/create','".ucfirst(str_replace("_","",$ModelName))."Controller@create');";
+  $code="\nRoute::put('/".ucfirst(str_replace("_","",$ModelName))."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update');";
+  $code="\nRoute::delete('/".ucfirst(str_replace("_","",$ModelName))."/delete/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
   file_put_contents(ROUTES_PATH."web.php", $code, FILE_APPEND | LOCK_EX);
 }
 
