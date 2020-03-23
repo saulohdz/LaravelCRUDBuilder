@@ -99,11 +99,11 @@ function loadJsonConfig($filename){
 }
 
 function GenRoutesWEB($ModelName){
-  $code="\nRoute::get('/".$ModelName."','".$ModelName."Controller@index');";
-  $code="\nRoute::post('/".$ModelName."','".$ModelName."Controller@store');";
-  $code="\nRoute::get('/".$ModelName."/create','".$ModelName."Controller@create');";
-  $code="\nRoute::put('/".$ModelName."/edit/{id}','".$ModelName."Controller@update');";
-  $code="\nRoute::delete('/".$ModelName."/delete/{id}','".$ModelName."Controller@destroy');";
+  $code="\nRoute::get('/".$ModelName."','".ucfirst(str_replace("_","",$ModelName))."Controller@index');";
+  $code="\nRoute::post('/".$ModelName."','".$ucfirst(str_replace("_","",$ModelName))."Controller@store');";
+  $code="\nRoute::get('/".$ucfirst(str_replace("_","",$ModelName))."/create','".$ucfirst(str_replace("_","",$ModelName))."Controller@create');";
+  $code="\nRoute::put('/".$ucfirst(str_replace("_","",$ModelName))."/edit/{id}','".$ucfirst(str_replace("_","",$ModelName))."Controller@update');";
+  $code="\nRoute::delete('/".$ucfirst(str_replace("_","",$ModelName))."/delete/{id}','".$ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
   file_put_contents(ROUTES_PATH."web.php", $code, FILE_APPEND | LOCK_EX);
 }
 
@@ -418,14 +418,14 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
         if (strtoupper($mk)=='CONTROLLER'){
    		     echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
    		     $data = GenControler($tbl->TableName);
-      		 $myfile = fopen("app/Http/Controllers/".ucfirst($tbl->TableName).'Controller.php', "w") or die("Unable to open file!");
+      		 $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
 		      fwrite($myfile, $data);
           fclose($myfile);
         }
         if (strtoupper($mk)=='MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenModel($tbl->TableName);
-           $myfile = fopen("app/".ucfirst($tbl->TableName).'.php', "w") or die("Unable to open file!");
+           $myfile = fopen("app/".ucfirst(str_replace("_","",$tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
@@ -434,7 +434,7 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
                 mkdir('resources/views/'.$tbl->TableName);
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
 
-                $myfile = fopen('resources/views/'.$tbl->TableName.'/'.ucfirst($tbl->TableName).'.php', "w") or die("Unable to open file!");
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
             }
@@ -444,14 +444,14 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
         if (strtoupper($mk)=='CONTROLLER'){
    		     echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
    		     $data = GenControler($tbl->TableName);
-      		 $myfile = fopen("app/Http/Controllers/".ucfirst($tbl->TableName).'Controller.php', "w") or die("Unable to open file!");
+      		 $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
 		      fwrite($myfile, $data);
           fclose($myfile);
         }
         if (strtoupper($mk)=='MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenModel($tbl->TableName);
-           $myfile = fopen("app/".ucfirst($tbl->TableName).'.php', "w") or die("Unable to open file!");
+           $myfile = fopen("app/".ucfirststr_replace("_","",($tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
@@ -460,15 +460,15 @@ echo "\n Comenzando el proceso de Generación de codigo.....";
                 mkdir('resources/views/'.$tbl->TableName);
                 $data = GenViewIndex($tbl->TableName,$tbl->fields);
 
-                $myfile = fopen('resources/views/'.$tbl->TableName.'/'.ucfirst($tbl->TableName).'.php', "w") or die("Unable to open file!");
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/'.str_replace("_","",$tbl->TableName).'.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
             }
 
   }
   GenRoutesWEB($tbl->TableName);
+  echo "\n-----------------------------------------------------------------";
    	}
-   	//echo "\n-----------------------------------------------------";
 
 }
 
