@@ -137,12 +137,14 @@ function GenController($ControllerName,$fields){
  $code .="\n    */";
  $code .="\n   public function create()";
  $code .="\n   {";
+ $with="";
  foreach($fields as $fld){
    if ($fld->FormType=='Relation'){
-      $code .="\n    \$".ucfirst(str_replace("_","",$fld-FieldName))."S = ".ucfirst(str_replace("_","",$$fld->FieldName))."::all()"; 
+      $code .="\n    \$".ucfirst(str_replace("_","",$fld->TableRel))."s = ".ucfirst(str_replace("_","",$fld->TableRel))."::all();"; 
+      $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."s'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."s";
    } 
  } 
- $code .="\n     return view('".str_replace("_","",$ControllerName).".create');";
+ $code .="\n     return view('".str_replace("_","",$ControllerName).".create')->with([".substr($with,1)."]);";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /**";
@@ -176,13 +178,15 @@ function GenController($ControllerName,$fields){
  $code .="\n    */";
  $code .="\n   public function edit(\$id)";
  $code .="\n   {";
+ $with="";
  foreach($fields as $fld){
    if ($fld->FormType=='Relation'){
-      $code .="\n    \$".ucfirst(str_replace("_","",$fld-FieldName))."S = ".ucfirst(str_replace("_","",$$fld->FieldName))."::all()"; 
+      $code .="\n    \$".ucfirst(str_replace("_","",$fld->TableRel))."s = ".ucfirst(str_replace("_","",$fld->TableRel))."::all();"; 
+      $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."s'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."s";
    } 
  } 
  $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
- $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$.".$ControllerName."]);";
+ $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$.".$ControllerName.$with."]);";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /*";
