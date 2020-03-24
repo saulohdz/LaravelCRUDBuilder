@@ -126,11 +126,6 @@ function GenController($ControllerName,$fields){
  $code .="\n    */\n";
  $code .="\n   public function index()";
  $code .="\n   {";
- foreach($fields as $fld){
-   if ($fld->FormType=='Relation'){
-      $code .="\n    \$".ucfirst(str_replace("_","",$fld-FieldName))."S = ".ucfirst(str_replace("_","",$$fld->FieldName))."::all()"; 
-   } 
- }
  $code .="\n    \$".ucfirst(str_replace("_","",$ControllerName))." = ".ucfirst(str_replace("_","",$ControllerName))."::paginate(10);";
  $code .="\n       return wiew('".str_replace("_","",$ControllerName).".index')->with(['".ucfirst(str_replace("_","",$ControllerName))."',\$".ucfirst(str_replace("_","",$ControllerName))."]);";
  $code .="\n   }";
@@ -229,14 +224,15 @@ function genModel($ModelName,$fields)
     $code .="\n";
     $code .="\nclass " . ucfirst(str_replace("_","",$ModelName)) . " extends Model";
     $code .="\n{";
+    $code .="\n    protected \$table='".$ModelName."';";
     foreach($fields as $fld){
     if ($fld->FormType=='Relation'){
-      $code .= "\n public funcion REL_".$ModelName."(){";      
-      $code .= "\n    return hasOne('\\App\\".$fld->TableRel."','".$fld->FieldRel."','".$ModelName."->id')"; 
+      $code .= "\n public function REL_".$fld->TableRel."(){";      
+      $code .= "\n    return hasOne('\\App\\".ucfirst(str_replace("_","",$fld->TableRel))."','".$fld->FieldRel."','id')"; 
       $code .="\n }\n";
       } 
     }    
-    $code .="\n    protected \$table='".$ModelName."';";
+
     $code .="\n}";
     $code .="\n}";
     return $code;
