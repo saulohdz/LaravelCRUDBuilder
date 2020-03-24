@@ -9,10 +9,10 @@ define('VIEWS_PATH',RESOURCES_PATH.'views/');
 define('ROUTES_PATH','routes/');
 
 //Seccion de Variables
-$jsonConfig=null;
+$jsonConfig = null;
 
 
-$parameters=array();
+$parameters = array();
 foreach($argv as $arg){
   if (strpos($arg, "=")){
    $parameters[]=explode("=",$arg);
@@ -480,7 +480,6 @@ else{
     
   if ($Comandos['GenStructure']!="" || $Comandos['genStructure']!="" || $Comandos['genstructure']!=""){
     $dbconf = ENV_Parser(file_get_contents(".env"));
-    //print_r($Comandos);
     $db     = new readStructure();
     $db->setDb($dbconf["DB_DATABASE"]);
     $db->setSrv($dbconf["DB_HOST"]);
@@ -490,8 +489,7 @@ else{
     echo "\n Generando estructura automaticamente de la Base de datos ".$dbconf["DB_DATABASE"]." en ".$dbconf["DB_HOST"];
     sleep(2);
     $jsonConfig = $db->readStructure();
-    //file_put_contents($Comandos["GenStructure"][0],json_encode($jsonConfig));
-    $myfile = fopen($Comandos["GenStructure"][0],"w");
+    $myfile     = fopen($Comandos["GenStructure"][0],"w");
     fwrite($myfile, $jsonConfig);
     fclose($myfile);
     echo "\n Estructura de la BD generada satisfactoriamente en archivo ".$Comandos["GenStructure"][0];
@@ -499,7 +497,7 @@ else{
     exit(0);
   }
 
-     $dbconf = ENV_Parser(file_get_contents(".env"));
+    $dbconf = ENV_Parser(file_get_contents(".env"));
     echo "\n No se encontro archivo de configuracion de la estructura de la base de datos....";
     $db     = new readStructure();
     $db->setDb($dbconf["DB_DATABASE"]);
@@ -509,7 +507,7 @@ else{
     echo "\n Generando estructura automaticamente de la Base de datos ".$dbconf["DB_DATABASE"]." en ".$dbconf["DB_HOST"];
     echo "\n Leyendo informacion de el archico .env ....";
     $jsonConfig = json_decode($db->readStructure());
-    //print_r($jsonConfig);
+
 }
 
   echo "\n Comenzando el proceso de Generación de codigo.....";
@@ -537,19 +535,20 @@ else{
                 if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
                  mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
                }
-                $data = GenViewIndex($tbl->TableName,$tbl->fields);
+                
                 //INDEX
+                $data = GenViewIndex($tbl->TableName,$tbl->fields);
                 $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/index.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
                 //EDIT
                 $data = GenViewCreate($tbl->TableName,$tbl->fields);
-                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/edit.blade.php', "w") or die("Unable to open file!");
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/create.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);
                 //CREATE
-                $data = GenViewIndex($tbl->TableName,$tbl->fields);
-                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/create.blade.php', "w") or die("Unable to open file!");
+                $data = GenViewEdit($tbl->TableName,$tbl->fields);
+                $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/edit.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);            }
         if (strtoupper($mk)=='ROUTE'){
@@ -603,5 +602,5 @@ else{
     }
   
 }
-
+echo "\n * * * La Generación de Codigo termino satisfactoriamente * * *";
 sign();
