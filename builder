@@ -92,7 +92,7 @@ function loadJsonConfig($filename){
       $jsonConfig=file_get_contents($dir);
        }
       else{
-        echo "\nEl archivo no existe o no esta en la ubicacion";
+        echo "\nEl archivo no existe o no esta en la ubicación";
         exit(1);
       }
 
@@ -103,14 +103,14 @@ function GenRoutesWEB($ModelName){
   $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."','".ucfirst(str_replace("_","",$ModelName))."Controller@index');";
   $code .= "\nRoute::post('/".str_replace("_","",$ModelName)."','".ucfirst(str_replace("_","",$ModelName))."Controller@store');";
   $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."/create','".ucfirst(str_replace("_","",$ModelName))."Controller@create');";
-  $code .= "\nRoute::put('/".str_replace("_","",$ModelName)."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update');";
+  $code .= "\nRoute::patch('/".str_replace("_","",$ModelName)."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update');";
   $code .= "\nRoute::delete('/".str_replace("_","",$ModelName)."/delete/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
   file_put_contents(ROUTES_PATH."web.php", $code, FILE_APPEND | LOCK_EX);
 
 }
 
 function GenController($ControllerName,$fields){
- $code = "\n<?php";
+ $code = "<?php";
  $code .= "\n";
  $code .="namespace App\Http\Controllers;\n";
  $code .="\n";
@@ -155,7 +155,7 @@ function GenController($ControllerName,$fields){
  $code .="\n    */";
  $code .="\n   public function store(Request \$request)";
  $code .="\n   {";
- $code .="\n    \$".ucfirst(str_replace("_","",$ControllerName))."::create(\$request->all());";
+ $code .="\n    \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::create(\$request->all());";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /**";
@@ -186,7 +186,7 @@ function GenController($ControllerName,$fields){
    } 
  } 
  $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
- $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$.".$ControllerName.$with."]);";
+ $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$.".$ControllerName.substr($with,1)."]);";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /*";
@@ -220,7 +220,7 @@ function GenController($ControllerName,$fields){
 
 function genModel($ModelName,$fields)
 {
-    $code ="\n<?php";
+    $code ="<?php";
     $code .="\n";
     $code .="\nnamespace App;";
     $code .="\n";
@@ -243,7 +243,7 @@ function genModel($ModelName,$fields)
 }
 
 function GenViewIndex($ModelName,$fields){
-    $code  ="\n <?php";
+    $code  =" <?php";
     $code .="\n @extends('layouts.admin')";
     $code .="\n @section('contenido')\n";
     $code .="\n <table class=\"table table-bordered table-striped table-sm\">";
@@ -299,7 +299,7 @@ function GenViewIndex($ModelName,$fields){
 }
 
 function GenViewEdit($ModelName,$fields){
-$code  = "\n<?php";
+$code  = "<?php";
 $code .="\n@extends('layout.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
@@ -324,7 +324,7 @@ $code .="\n</div>";
 $code .="\n@endif";
 $code .="\n<form action=\"{{ route('".$ModelName.".update',\$".ucfirst(str_replace("_","",$ModelName))."->id) }}\" method=\"POST\">";
 $code .="\n@csrf";
-$code .="\n@method('PUT')";
+$code .="\n@method('PATCH')";
 $code .="\n<div class=\"row\">";
 foreach($fields as $fld) {
     //if ($fld->FormType="Text")
@@ -348,7 +348,7 @@ return  $code;
 
 
 function GenViewCreate($ModelName,$fields){
-$code  = "\n<?php";
+$code  = "<?php";
 $code .="\n@extends('layout.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
@@ -446,8 +446,8 @@ function help(){
     echo "\n Command :  php builder |parameter #1 parameter #2 parameter #3|";
     echo "\n Paramaters : ";
     echo "\n        GenStructure=file.json  -> genera el archivo JSON de la estructura de la BD, este comando se ejecuta solo, ";
-    echo "\n         no se puede ejecutar junto con otros comandos";
-    echo "\n        configfile=file.json file with the structure en database";
+    echo "\n        no se puede ejecutar junto con otros comandos";
+    echo "\n        configfile=file.json file with the structure of database";
     echo "\n        tables=| All | table 1,table 2,...,table n|  Tables what you want generate";
     echo "\n        make=|controller|,|model|,|view|,route| generate Controllers, Models, View and/or routes of tables\n";
 }
