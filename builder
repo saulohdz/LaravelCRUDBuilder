@@ -100,11 +100,12 @@ function loadJsonConfig($filename){
 
 function GenRoutesWEB($ModelName){
   $code = "\n // RUTAS WEB DEL MODELO ".$ModelName;
-  $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."','".ucfirst(str_replace("_","",$ModelName))."Controller@index');";
-  $code .= "\nRoute::post('/".str_replace("_","",$ModelName)."','".ucfirst(str_replace("_","",$ModelName))."Controller@store');";
-  $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."/create','".ucfirst(str_replace("_","",$ModelName))."Controller@create');";
-  $code .= "\nRoute::patch('/".str_replace("_","",$ModelName)."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update');";
-  $code .= "\nRoute::delete('/".str_replace("_","",$ModelName)."/delete/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@destroy');";
+  $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."','".ucfirst(str_replace("_","",$ModelName))."Controller@index')->name('".$ModelName.".index');";
+  $code .= "\nRoute::post('/".str_replace("_","",$ModelName)."','".ucfirst(str_replace("_","",$ModelName))."Controller@store')->name('".$ModelName.".store');";
+  $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."/create','".ucfirst(str_replace("_","",$ModelName))."Controller@create')->name('".$ModelName.".create');";
+  $code .= "\nRoute::get('/".str_replace("_","",$ModelName)."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@edit')->name('".$ModelName.".edit');";
+  $code .= "\nRoute::patch('/".str_replace("_","",$ModelName)."/edit/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@update')->name('".$ModelName.".update');";
+  $code .= "\nRoute::delete('/".str_replace("_","",$ModelName)."/delete/{id}','".ucfirst(str_replace("_","",$ModelName))."Controller@destroy')->name('".$ModelName.".destroy');";
   file_put_contents(ROUTES_PATH."web.php", $code, FILE_APPEND | LOCK_EX);
 
 }
@@ -127,7 +128,7 @@ function GenController($ControllerName,$fields){
  $code .="\n   public function index()";
  $code .="\n   {";
  $code .="\n    \$".ucfirst(str_replace("_","",$ControllerName))." = ".ucfirst(str_replace("_","",$ControllerName))."::paginate(10);";
- $code .="\n       return wiew('".str_replace("_","",$ControllerName).".index')->with(['".ucfirst(str_replace("_","",$ControllerName))."',\$".ucfirst(str_replace("_","",$ControllerName))."]);";
+ $code .="\n       return view('".str_replace("_","",$ControllerName).".index')->with(['".ucfirst(str_replace("_","",$ControllerName))."'=>\$".ucfirst(str_replace("_","",$ControllerName)).",'Title'=>'Lista de ".$ControllerName."s','ActiveMenu'=>'".$ControllerName."s']);";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /**";
@@ -166,7 +167,7 @@ function GenController($ControllerName,$fields){
  $code .="\n    */";
  $code .="\n   public function show(\$id)";
  $code .="\n   {";
- $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
+ $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
  $code .="\n      return $".$ControllerName.";";
  $code .="\n   }";
  $code .="\n";
@@ -185,8 +186,8 @@ function GenController($ControllerName,$fields){
       $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."s'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."s";
    } 
  } 
- $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
- $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$.".$ControllerName.substr($with,1)."]);";
+ $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
+ $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$".$ControllerName.substr($with,1).",,'Title'=>'Editar ".$ControllerName."s','ActiveMenu'=>'".$ControllerName."s']]);";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /*";
@@ -198,7 +199,7 @@ function GenController($ControllerName,$fields){
  $code .="\n    */\n";
  $code .="\n   public function update(Request \$request, \$id)";
  $code .="\n   {";
- $code .="\n     \$".ucfirst(str_replace("_","",$ControllerName))."::update(\$request->all());";
+ $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::update(\$request->all());";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /**";
@@ -209,7 +210,7 @@ function GenController($ControllerName,$fields){
  $code .="\n    */";
  $code .="\n   public function destroy(\$id)";
  $code .="\n   {";
- $code .="\n      \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(id);";
+ $code .="\n      \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
  $code .="\n       \$".$ControllerName."->delete();";
  $code .="\n       return view('".str_replace("_","",$ControllerName).".index');";
  $code .="\n   }";
@@ -238,13 +239,11 @@ function genModel($ModelName,$fields)
     }    
 
     $code .="\n}";
-    $code .="\n}";
     return $code;
 }
 
 function GenViewIndex($ModelName,$fields){
-    $code  =" <?php";
-    $code .="\n @extends('layouts.admin')";
+    $code .=" @extends('layouts.admin')";
     $code .="\n @section('contenido')\n";
     $code .="\n <table class=\"table table-bordered table-striped table-sm\">";
     $code .="\n        <thead>";
@@ -259,8 +258,8 @@ function GenViewIndex($ModelName,$fields){
     $code .="\n    @foreach(\$".ucfirst(str_replace("_","",$ModelName))." as \$row)";
     $code .="\n            <tr>";
     $code .="\n                <td>";
-    $code .="\n                    <a href=\"/encuesta/edit/{{\$row->id}}\" title=\"Editar ".str_replace("_","",$ModelName)."\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
-    $code .="\n                    <a href=\"#\" class=\"btn btn-xs btn-outline-danger\" title=\"Borrar ".$ModelName."\" onclick=\"delete".str_replace("_","",$ModelName)."({{\$row->id}})\"><i class=\"fas fa-trash-alt\"></i></a>";
+    $code .="\n                    <a href=\"/".$ModelName."/edit/{{\$row->id}}\" title=\"Editar ".str_replace("_","",$ModelName)."\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
+    $code .="\n                    <a href=\"#\" class=\"btn btn-xs btn-outline-danger\" title=\"Borrar ".$ModelName."\" onclick=\"delete".ucfirst(str_replace("_","",$ModelName))."({{\$row->id}})\"><i class=\"fas fa-trash-alt\"></i></a>";
     $code .="\n                </td>";
     foreach ($fields as $fld) {
         $code .="\n                <td>{{\$row->".$fld->FieldName."}}</td>";
@@ -272,13 +271,13 @@ function GenViewIndex($ModelName,$fields){
     $code .="\n    <script>";
     $code .="\nfunction delete".ucfirst(str_replace("_","",$ModelName))."(id){";
     $code .="\n            Swal.fire({";
-    $code .="\n                title: 'Seguro de borrar encuesta?',";
+    $code .="\n                title: 'Seguro de borrar ".$ModelName."?',";
     $code .="\n                text: 'No podrá revertir eso!',";
     $code .="\n                icon: 'warning',";
     $code .="\n                showCancelButton: true,";
     $code .="\n                confirmButtonColor: '#3085d6',";
     $code .="\n                cancelButtonColor: '#d33',";
-    $code .="\n                confirmButtonText: 'Si, borrarla!',";
+    $code .="\n                confirmButtonText: 'Si, borrarlo!',";
     $code .="\n                cancelButtonText: 'Cancelar'";
     $code .="\n            }).then((result) => {";
     $code .="\n                if (result.value) {";
@@ -294,13 +293,11 @@ function GenViewIndex($ModelName,$fields){
     $code .="\n        }";
     $code .="\n    </script>";
     $code .="\n    @endsection";
-    $code .="\n}";
-    return $code;
+      return $code;
 }
 
 function GenViewEdit($ModelName,$fields){
-$code  = "<?php";
-$code .="\n@extends('layout.admin')";
+$code .="\n@extends('layouts.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
 $code .="\n<div class=\"col-md-12 margin-tb\">";
@@ -348,8 +345,7 @@ return  $code;
 
 
 function GenViewCreate($ModelName,$fields){
-$code  = "<?php";
-$code .="\n@extends('layout.admin')";
+$code .="\n@extends('layouts.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
 $code .="\n<div class=\"col-md-12 margin-tb\">";
@@ -516,22 +512,22 @@ else{
     sleep(2);
     foreach ($Comandos["make"] as $mk) {
       if (in_array($tbl->TableName,$Comandos["tables"]) and strtoupper($Comandos["tables"][0])!='ALL'){
-        if (strtoupper($mk)=='CONTROLLER'){
+        if (strtoupper($mk) == 'CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenController($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
-        if (strtoupper($mk)=='MODEL'){
+        if (strtoupper($mk) == 'MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenModel($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/".ucfirst(str_replace("_","",$tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
-       if (strtoupper($mk)=='VIEW'){
-                echo "\n Generando ".ROUTEst($mk)." de la Tabla ".$tbl->TableName;
+       if (strtoupper($mk) == 'VIEW'){
+                echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
                 if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
                  mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
                }
@@ -551,27 +547,27 @@ else{
                 $myfile = fopen('resources/views/'.str_replace("_","",$tbl->TableName).'/edit.blade.php', "w") or die("Unable to open file!");
                 fwrite($myfile, $data);
                 fclose($myfile);            }
-        if (strtoupper($mk)=='ROUTE'){
+        if (strtoupper($mk) == 'ROUTE'){
           GenRoutesWEB($tbl->TableName);
-          echo "\n Agregando Routas del Modelo ".$tbl->TableName;
+          echo "\n Agregando Rutas del Modelo ".$tbl->TableName;
       }
     }
   else{
-        if (strtoupper($mk)=='CONTROLLER'){
+        if (strtoupper($mk) == 'CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenController($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/Http/Controllers/".ucfirst(str_replace("_","",$tbl->TableName)).'Controller.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
-        if (strtoupper($mk)=='MODEL'){
+        if (strtoupper($mk) == 'MODEL'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenModel($tbl->TableName,$tbl->fields);
            $myfile = fopen("app/".ucfirst(str_replace("_","",$tbl->TableName)).'.php', "w") or die("Unable to open file!");
           fwrite($myfile, $data);
           fclose($myfile);
         }
-       if (strtoupper($mk)=='VIEW'){
+       if (strtoupper($mk) == 'VIEW'){
                 echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
                 if (!file_exists('resources/views/'.str_replace("_","",$tbl->TableName))){
                  mkdir('resources/views/'.str_replace("_","",$tbl->TableName));
@@ -592,9 +588,9 @@ else{
                 fwrite($myfile, $data);
                 fclose($myfile);
             }
-        if (strtoupper($mk)=='ROUTE'){
+        if (strtoupper($mk) == 'ROUTE'){
           GenRoutesWEB($tbl->TableName);
-          echo "\n Agregando Routas del Modelo ".$tbl->TableName;
+          echo "\n Agregando Rutas del Modelo ".$tbl->TableName;
       }            
 
   }
