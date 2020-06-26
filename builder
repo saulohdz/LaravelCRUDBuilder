@@ -116,6 +116,9 @@ function GenController($ControllerName,$fields){
  $code .="namespace App\Http\Controllers;\n";
  $code .="\n";
  $code .="\n use App\\".ucfirst(str_replace("_","",$ControllerName)).";";
+ foreach($fields as $fld){
+  $code .="\n use App\\".ucfirst(str_replace("_","",$fld->TableRel)).";";
+ }
  $code .="\n use Illuminate\Http\Request;";
  $code .="\n";
  $code .="\nclass ".ucfirst(str_replace("_","",$ControllerName))."Controller extends Controller";
@@ -142,7 +145,7 @@ function GenController($ControllerName,$fields){
  foreach($fields as $fld){
    if ($fld->FormType=='Relation'){
       $code .="\n    \$".ucfirst(str_replace("_","",$fld->TableRel))."s = ".ucfirst(str_replace("_","",$fld->TableRel))."::all();"; 
-      $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."s'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."s";
+      $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."List'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."s";
    } 
  } 
  $code .="\n     return view('".str_replace("_","",$ControllerName).".create')->with([".substr($with,1)."]);";
@@ -182,12 +185,12 @@ function GenController($ControllerName,$fields){
  $with="";
  foreach($fields as $fld){
    if ($fld->FormType=='Relation'){
-      $code .="\n    \$".ucfirst(str_replace("_","",$fld->TableRel))."s = ".ucfirst(str_replace("_","",$fld->TableRel))."::all();"; 
-      $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."s'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."s";
+      $code .="\n    \$".ucfirst(str_replace("_","",$fld->TableRel))." = ".ucfirst(str_replace("_","",$fld->TableRel))."::all();"; 
+      $with .= ",'".ucfirst(str_replace("_","",$fld->TableRel))."List'=>\$".ucfirst(str_replace("_","",$fld->TableRel))."";
    } 
  } 
- $code .="\n     \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
- $code .="\n      return view('".$ControllerName.".edit')->with(['".$ControllerName."'=>$".$ControllerName.substr($with,1).",,'Title'=>'Editar ".$ControllerName."s','ActiveMenu'=>'".$ControllerName."s']]);";
+ $code .="\n     \$".str_replace("_","",$ControllerName)." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
+ $code .="\n      return view('".$ControllerName.".edit')->with(['".str_replace("_","",$ControllerName)."'=>$".str_replace("_","",$ControllerName).substr($with,1).",'Title'=>'Editar ".$ControllerName."','ActiveMenu'=>'".$ControllerName."']);";
  $code .="\n   }";
  $code .="\n";
  $code .="\n   /*";
@@ -210,8 +213,8 @@ function GenController($ControllerName,$fields){
  $code .="\n    */";
  $code .="\n   public function destroy(\$id)";
  $code .="\n   {";
- $code .="\n      \$".$ControllerName." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
- $code .="\n       \$".$ControllerName."->delete();";
+ $code .="\n      \$".str_replace("_","",$ControllerName)." = ".ucfirst(str_replace("_","",$ControllerName))."::find(\$id);";
+ $code .="\n       \$".str_replace("_","",$ControllerName)."->delete();";
  $code .="\n       return view('".str_replace("_","",$ControllerName).".index');";
  $code .="\n   }";
  $code .="\n}";
@@ -233,7 +236,7 @@ function genModel($ModelName,$fields)
     foreach($fields as $fld){
     if ($fld->FormType=='Relation'){
       $code .= "\n public function REL_".$fld->TableRel."(){";      
-      $code .= "\n    return hasOne('\\App\\".ucfirst(str_replace("_","",$fld->TableRel))."','".$fld->FieldRel."','id')"; 
+      $code .= "\n    return hasOne('\\App\\".ucfirst(str_replace("_","",$fld->TableRel))."','".$fld->FieldRel."','id');"; 
       $code .="\n }\n";
       } 
     }    
@@ -243,6 +246,7 @@ function genModel($ModelName,$fields)
 }
 
 function GenViewIndex($ModelName,$fields){
+   $code="";
     $code .=" @extends('layouts.admin')";
     $code .="\n @section('contenido')\n";
     $code .="\n <table class=\"table table-bordered table-striped table-sm\">";
@@ -255,7 +259,7 @@ function GenViewIndex($ModelName,$fields){
     $code .="\n        </tr>";
     $code .="\n      </thead>";
     $code .="\n        <tbody>";
-    $code .="\n    @foreach(\$".ucfirst(str_replace("_","",$ModelName))." as \$row)";
+    $code .="\n    @foreach(\$".ucfirst(str_replace("_","",$ModelName))."List as \$row)";
     $code .="\n            <tr>";
     $code .="\n                <td>";
     $code .="\n                    <a href=\"/".$ModelName."/edit/{{\$row->id}}\" title=\"Editar ".str_replace("_","",$ModelName)."\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
@@ -284,7 +288,7 @@ function GenViewIndex($ModelName,$fields){
     $code .="\n                    \$.post('/".str_replace("_","",$ModelName)."/delete/'+id,{\"_token\": \$('meta[name=\"csrf_token\"]').attr('content'),\"_method\":\"delete\"},function(){";
     $code .="\n                        Swal.fire(";
     $code .="\n                            'Borrado!',";
-    $code .="\n                            'Encuesta borrada.',";
+    $code .="\n                            '".$ModelName." borrado.',";
     $code .="\n                            'success'";
     $code .="\n                        )";
     $code .="\n                    })";
@@ -297,12 +301,14 @@ function GenViewIndex($ModelName,$fields){
 }
 
 function GenViewEdit($ModelName,$fields){
+$code="";
 $code .="\n@extends('layouts.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
-$code .="\n<div class=\"col-md-12 margin-tb\">";
-$code .="\n<div class=\"pull-left\">";
-$code .="\n<h2>Editar ".$ModelName."</h2>";
+$code .="\n<div class=\"col-md-12\">";
+$code .="\n<div class=\"card\">";
+$code .="\n<div class=\"card-header\">";
+$code .="\n<h2 class=\"\">Editar ".$ModelName."</h2>";
 $code .="\n</div>";
 $code .="\n<div class=\"pull-right\">";
 $code .="\n<a class=\"btn btn-primary\" href=\"{{ route('".$ModelName.".index') }}\"> Regresar</a>";
@@ -311,7 +317,7 @@ $code .="\n</div>";
 $code .="\n</div>";
 $code .="\n@if (\$errors->any())";
 $code .="\n<div class=\"alert alert-danger\">";
-$code .="\n<strong>Whoops!</strong> Hay error en loa entrada<br><br>";
+$code .="\n<strong>Whoops!</strong> Hay error en los datos de entrada<br><br>";
 $code .="\n<ul>";
 $code .="\n    @foreach (\$errors->all() as \$error)";
 $code .="\n<li>\{\{ \$error \}\}</li>";
@@ -319,32 +325,92 @@ $code .="\n    @endforeach";
 $code .="\n</ul>";
 $code .="\n</div>";
 $code .="\n@endif";
-$code .="\n<form action=\"{{ route('".$ModelName.".update',\$".ucfirst(str_replace("_","",$ModelName))."->id) }}\" method=\"POST\">";
+$code .="\n<form class= \"form-horizontal\" action=\"{{ route('".$ModelName.".update',\$".ucfirst(str_replace("_","",$ModelName))."->id) }}\" method=\"POST\">";
 $code .="\n@csrf";
 $code .="\n@method('PATCH')";
 $code .="\n<div class=\"row\">";
 foreach($fields as $fld) {
-    //if ($fld->FormType="Text")
+    if ($fld->FormType="Text")
     {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
-        $code .= "\n<div class=\"col-sm-2\">";
-        $code .= "\n<input type=\"text\" name=\"blog_title\" value=\"{{ \$" . ucfirst(str_replace("_","",$ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"Name\">";
-        $code .= "\n</div>";
+        $code .= "\n<input type=\"text\" maxlength=\"".$fld->Long."\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."\" value=\"{{ \$" .ucfirst(str_replace("_","",$ModelName))."->" .$fld->FieldName." }}\" class=\"form-control\" placeholder=\"".$fld->FieldName."\">";
         $code .="\n</div>";
     }
-}
+    if ($fld->FormType="Password")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<input type=\"password\"  maxlength=\"".$fld->Long."\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."\" value=\"{{ \$" .ucfirst(str_replace("_","",$ModelName))."->" .$fld->FieldName." }}\" class=\"form-control\" placeholder=\"".$fld->FieldName."\">";
+        $code .="\n</div>";
+    }
+    if ($fld->FormType="Date")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<input type=\"date\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."\" value=\"{{ \$" .ucfirst(str_replace("_","",$ModelName))."->" .$fld->FieldName." }}\" class=\"form-control\" placeholder=\"".$fld->FieldName."\">";
+        $code .="\n</div>";
+    }
+    if ($fld->FormType="Number")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<input type=\"number\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."\" value=\"{{ \$" .ucfirst(str_replace("_","",$ModelName))."->" .$fld->FieldName." }}\" class=\"form-control\" placeholder=\"".$fld->FieldName."\">";
+        $code .="\n</div>";
+    }
+    if ($fld->FormType="Radio")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k=0;
+        foreach($fld->Values as $valor){
+          $code .= "\n<input type=\"radio\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."_".$k."\" value=\"".$valor->Value."\" class=\"form-control\"> ".$valor->Label;
+          $k++;
+        }
+        $code .="\n</div>";
+    }
+    if ($fld->FormType="Check")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        foreach($fld->Values as $valor){
+          $code .= "\n<input type=\"checkbox\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."[]\" value=\"".$valor->Value."\" class=\"form-control\"> ".$valor->Label;
+        }
+        $code .="\n</div>";
+    }
+    if ($fld->FormType="Boolean")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        foreach($fld->Values as $valor){
+          $code .= "\n<input type=\"checkbox\" name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."[]\" value=\"".$valor->Value."\" class=\"form-control\"> ".$valor->Label;
+        }
+        $code .="\n</div>";
+    }
+    if ($fld->FormType="Relation")
+    {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"".$fld->FieldName."\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<SELECT  name=\"".$fld->FieldName."\" id=\"".$fld->FieldName."\" class=\"form-control\">";
+        $code .= "\n @foreach(\$".$fld->TableRel."List as \$row )";
+        $code .= "\n <option value=\"".$fld->FieldRel."\">".$fld->FieldDisplay."</option>";
+        $code .= "\n @endforeach";
+        $code .= "\n</SELECT>";
+        $code .="\n</div>";
+    }
+  }
 
-$code .="\n<button type=\"submit\" class=\"btn btn-primary\">Submit</button>";
-$code .="\n</div>";
-$code .="\n</div>";
+$code .="\n<button type=\"submit\" class=\"btn btn-primary\">Grabar</button>";
 $code .="\n</form>";
+$code .="\n</div>";
+$code .="\n</div>";
 $code .="\n@endsection";
 return  $code;
 }
 
 
 function GenViewCreate($ModelName,$fields){
+$code="";
 $code .="\n@extends('layouts.admin')";
 $code .="\n@section('contenido')";
 $code .="\n<div class=\"row\">";
@@ -511,7 +577,8 @@ else{
    foreach($jsonConfig->Tables as $tbl){
     sleep(2);
     foreach ($Comandos["make"] as $mk) {
-      if (in_array($tbl->TableName,$Comandos["tables"]) and strtoupper($Comandos["tables"][0])!='ALL'){
+      if (strtoupper($Comandos["tables"][0])!='ALL'){
+      if (in_array($tbl->TableName,$Comandos["tables"])){
         if (strtoupper($mk) == 'CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
            $data = GenController($tbl->TableName,$tbl->fields);
@@ -552,6 +619,7 @@ else{
           echo "\n Agregando Rutas del Modelo ".$tbl->TableName;
       }
     }
+  }
   else{
         if (strtoupper($mk) == 'CONTROLLER'){
            echo "\n Generando ".ucfirst($mk)." de la Tabla ".$tbl->TableName;
