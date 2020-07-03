@@ -151,8 +151,8 @@ function GenController($ControllerName, $fields)
       $with .= ",'" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List'=>\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "s";
     }
   }
-  
-  $code .= "\n     return view('" . str_replace("_", "", $ControllerName) . ".create')->with([" . (substr($with, 1)!=""?substr($with, 1).",":"") . "'Title'=>'Lista de " . $ControllerName . "','ActiveMenu'=>'" . $ControllerName . "']);";
+
+  $code .= "\n     return view('" . str_replace("_", "", $ControllerName) . ".create')->with([" . (substr($with, 1) != "" ? substr($with, 1) . "," : "") . "'Title'=>'Lista de " . $ControllerName . "','ActiveMenu'=>'" . $ControllerName . "']);";
   $code .= "\n   }";
   $code .= "\n";
   $code .= "\n   /**";
@@ -163,8 +163,32 @@ function GenController($ControllerName, $fields)
   $code .= "\n    */";
   $code .= "\n   public function store(Request \$request)";
   $code .= "\n   {";
-  $code .= "\n    \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::create(\$request->all());";
+  //$code .= "\n    \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::create(\$request->all());";
+  $code .= "\n  \$validator = Validator::make(\$request->all(), [";
+  $validation = "";
+  foreach ($fields as $fld) {
+    if (isset($fld->Validation) && $fld->Validation != "") {
+      if ($validation == "") {
+        $validation .= "\n       '" . $fld->FieldName . "' => '" . $fld->Validation . "'";
+      } else {
+        $validation .= "\n       ,'" . $fld->FieldName . "' => '" . $fld->Validation . "'";
+      }
+    }
+  }
+  $code .= $validation;
+  $code .= "\n   ]);";
+  $code .= "\n if (\$validator->fails()) {";
+  $code .= "\n  return redirect()->route('" . $ControllerName . ".create')";
+  $code .= "\n     ->withErrors(\$validator)";
+  $code .= "\n     ->withInput();";
+  $code .= "\n}";
+  $code .= "\n   \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::find(\$id);";
+  foreach ($fields as $fld) {
+    $code .= "\n     \$" . $ControllerName . "->" . $fld->FieldName . " = \$request->" . $fld->FieldName . ";";
+  }
+  $code .= "\n    \$" . $ControllerName . "->save();";
   $code .= "\n   }";
+  $code .= "\n   ";
   $code .= "\n";
   $code .= "\n   /**";
   $code .= "\n    * Display the specified resource.";
@@ -206,7 +230,29 @@ function GenController($ControllerName, $fields)
   $code .= "\n    */\n";
   $code .= "\n   public function update(Request \$request, \$id)";
   $code .= "\n   {";
-  $code .= "\n     \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::update(\$request->all());";
+  $code .= "\n  \$validator = Validator::make(\$request->all(), [";
+  $validation = "";
+  foreach ($fields as $fld) {
+    if (isset($fld->Validation) && $fld->Validation != "") {
+      if ($validation == "") {
+        $validation .= "\n       '" . $fld->FieldName . "' => '" . $fld->Validation . "'";
+      } else {
+        $validation .= "\n       ,'" . $fld->FieldName . "' => '" . $fld->Validation . "'";
+      }
+    }
+  }
+  $code .= $validation;
+  $code .= "\n   ]);";
+  $code .= "\n   \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::find(\$id);";
+  foreach ($fields as $fld) {
+    $code .= "\n     \$" . $ControllerName . "->" . $fld->FieldName . " = \$request->" . $fld->FieldName . ";";
+  }
+  $code .= "\n if (\$validator->fails()) {";
+  $code .= "\n  return redirect()->route('" . $ControllerName . ".update')";
+  $code .= "\n     ->withErrors(\$validator)";
+  $code .= "\n     ->withInput();";
+  $code .= "\n}";
+  $code .= "\n    \$" . $ControllerName . "->update();";
   $code .= "\n   }";
   $code .= "\n";
   $code .= "\n   /**";
@@ -240,7 +286,7 @@ function genModel($ModelName, $fields)
   foreach ($fields as $fld) {
     if ($fld->FormType === 'Relation') {
       $code .= "\n public function REL_" . $fld->TableRel . "(){";
-      $code .= "\n    return hasOne('\\App\\" . ucfirst(str_replace("_", "", $fld->TableRel)) . "','" . $fld->FieldRel . "','id');";
+      $code .= "\n    return \$this->hasOne('\\App\\" . ucfirst(str_replace("_", "", $fld->TableRel)) . "','" . $fld->FieldRel . "','id');";
       $code .= "\n }\n";
     }
   }
@@ -254,7 +300,7 @@ function GenViewIndex($ModelName, $fields)
   $code = "";
   $code .= " @extends('layouts.admin')";
   $code .= "\n @section('contenido')\n";
-  $code .= "<div class=\"row\"><button class=\"btn btn-success\" onclick=\"window.location.assign('/".str_replace("_", "", $ModelName)."/create')\">Agregar</button></div>";
+  $code .= "<div class=\"row\"><button class=\"btn btn-success\" onclick=\"window.location.assign('/" . str_replace("_", "", $ModelName) . "/create')\">Agregar</button></div>";
   $code .= "\n <table class=\"table table-bordered table-striped table-sm\">";
   $code .= "\n        <thead>";
   $code .= "\n        <tr>";
@@ -275,15 +321,19 @@ function GenViewIndex($ModelName, $fields)
   $code .= "\n                </td>";
   foreach ($fields as $fld) {
     if ($fld->ShowInList == "" || $fld->ShowInList == true) {
-      $code .= "\n                <td>{{\$row->" . $fld->FieldName . "}}</td>";
+      if ($fld->FormType=='Relation'){
+        $code .= "\n                <td>{{\$row->REL_" . $fld->TableRel . "->".$fld->FieldDisplay."}}</td>";
+      } else {
+         $code .= "\n                <td>{{\$row->" . $fld->FieldName . "}}</td>";
+      }
     }
   }
   $code .= "\n           </tr>";
   $code .= "\n    @endforeach";
   $code .= "\n        </tbody>";
   $code .= "\n    </table>";
-  $code .= "\n    <div class=\"row\">{{\$".ucfirst(str_replace("_", "", $ModelName))."List->links()}}</div>";
-  
+  $code .= "\n    <div class=\"row\">{{\$" . ucfirst(str_replace("_", "", $ModelName)) . "List->links()}}</div>";
+
   $code .= "\n    <script>";
   $code .= "\nfunction delete" . ucfirst(str_replace("_", "", $ModelName)) . "(id){";
   $code .= "\n            Swal.fire({";
@@ -407,7 +457,7 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n @foreach(\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List as \$row )";
-        $code .= "\n <option value=\"" . $fld->FieldRel . "\">{{ \$row->" . $fld->FieldDisplay . "}}</option>";
+        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
         $code .= "\n @endforeach";
         $code .= "\n</SELECT>";
         $code .= "\n</div>";
@@ -520,7 +570,7 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n @foreach(\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List as \$row )";
-        $code .= "\n <option value=\"" . $fld->FieldRel . "\">{{ \$row->" . $fld->FieldDisplay . "}}</option>";
+        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
         $code .= "\n @endforeach";
         $code .= "\n</SELECT>";
         $code .= "\n</div>";

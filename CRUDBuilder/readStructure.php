@@ -76,7 +76,9 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"Flags\":\"" . $valor->flags . "\"\n";
                 $strResponse .= ",\"FormType\":\"" . $frmType . "\"\n";
                 $strResponse .= ",\"SubType\":\"\"\n";
-                $strResponse .= ",\"Label\":\"\"\n";
+                $strResponse .= ",\"MultipleValues\":false\n";
+                $strResponse .= ",\"PackType\":\"\"\n";
+                $strResponse .= ",\"Label\":\"".$valor->name."\"\n";
                 $strResponse .= ",\"PK\":\"" . $PK . "\"\n";
                 $strResponse .= ",\"AI\":\"" . $AI . "\"\n";
                 $strResponse .= ",\"TableRel\":\"\"\n";
@@ -86,13 +88,17 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"IdParent\":\"\"\n";
                 $strResponse .= ",\"ChildDisplay\":\"\"\n";
                 $strResponse .= ",\"UseCombo\":\"\"\n";
-                $strResponse .= ",\"ShowInList\":\"\"\n";
+                $strResponse .= ",\"Validation\":\"\"\n";
+                $strResponse .= ",\"ShowInList\":true\n";
+                $strResponse .= ",\"ShowInEdit\":".($AI=="true"?"false":"true")."\n";
+                $strResponse .= ",\"ShowInCreate\":".($AI=="true"?"false":"true")."\n";
                 $strResponse .= ",\"ShowInDetails\":\"\"\n";
                 $strResponse .= ",\"ReadOnly\":\"\"\n";
+                $strResponse .= ",\"Hidden\":false\n";
                 $strResponse .= ",\"Format\":\"\"\n";
                 $strResponse .= ",\"Width\":\"\"\n";
-                $strResponse .= ",\"Heigth\":\"\"\n";
-                $strResponse .= ",\"Values\":\"\"\n";
+                $strResponse .= ",\"Height\":\"\"\n";
+                $strResponse .= ",\"Values\":[]\n";
                 $strResponse .= ",\"IconValues\":\"\"\n";
                 $strResponse .= ",\"FieldDbType\":\"" . $valor->type . "\"}";
                 if ($c2 != count($fields)) {
