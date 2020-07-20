@@ -100,12 +100,12 @@ function GenRoutesWEB($ModelName)
 {
   $code = "\n // RUTAS WEB DEL MODELO " . $ModelName;
   $code .= "\nRoute::get('/" . str_replace("_", "", $ModelName) . "','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@index')->name('" . $ModelName . ".index');";
-  $code .= "\nRoute::post('/" . str_replace("_", "", $ModelName) . "','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@store')->name('" . $ModelName . ".store');";
+  $code .= "\nRoute::post('/" . str_replace("_", "", $ModelName) . "/create','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@store')->name('" . $ModelName . ".store');";
   $code .= "\nRoute::get('/" . str_replace("_", "", $ModelName) . "/create','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@create')->name('" . $ModelName . ".create');";
   $code .= "\nRoute::get('/" . str_replace("_", "", $ModelName) . "/edit/{id}','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@edit')->name('" . $ModelName . ".edit');";
   $code .= "\nRoute::patch('/" . str_replace("_", "", $ModelName) . "/edit/{id}','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@update')->name('" . $ModelName . ".update');";
   $code .= "\nRoute::delete('/" . str_replace("_", "", $ModelName) . "/delete/{id}','" . ucfirst(str_replace("_", "", $ModelName)) . "Controller@destroy')->name('" . $ModelName . ".destroy');";
-  file_put_contents(ROUTES_PATH . "web.php", $code, FILE_APPEND | LOCK_EX);
+  file_put_contents(ROUTES_PATH . "webroutes.php", $code, FILE_APPEND | LOCK_EX);
 }
 
 function GenController($ControllerName, $fields)
@@ -114,6 +114,7 @@ function GenController($ControllerName, $fields)
   $code .= "\n";
   $code .= "namespace App\Http\Controllers;\n";
   $code .= "\n";
+  $code .= "\n use Illuminate\Support\Facades\Validator;";
   $code .= "\n use App\\" . ucfirst(str_replace("_", "", $ControllerName)) . ";";
   foreach ($fields as $fld) {
     if ($fld->FormType === 'Relation') {
@@ -178,15 +179,16 @@ function GenController($ControllerName, $fields)
   $code .= $validation;
   $code .= "\n   ]);";
   $code .= "\n if (\$validator->fails()) {";
-  $code .= "\n  return redirect()->route('" . $ControllerName . ".create')";
+  $code .= "\n  return back()";
   $code .= "\n     ->withErrors(\$validator)";
   $code .= "\n     ->withInput();";
   $code .= "\n}";
-  $code .= "\n   \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::find(\$id);";
+  $code .= "\n   \$" . $ControllerName . " = new " . ucfirst(str_replace("_", "", $ControllerName)) . ";";
   foreach ($fields as $fld) {
     $code .= "\n     \$" . $ControllerName . "->" . $fld->FieldName . " = \$request->" . $fld->FieldName . ";";
   }
   $code .= "\n    \$" . $ControllerName . "->save();";
+  $code .= "\n   return redirect('/admin/".$ControllerName."');";
   $code .= "\n   }";
   $code .= "\n   ";
   $code .= "\n";
@@ -248,11 +250,12 @@ function GenController($ControllerName, $fields)
     $code .= "\n     \$" . $ControllerName . "->" . $fld->FieldName . " = \$request->" . $fld->FieldName . ";";
   }
   $code .= "\n if (\$validator->fails()) {";
-  $code .= "\n  return redirect()->route('" . $ControllerName . ".update')";
-  $code .= "\n     ->withErrors(\$validator)";
-  $code .= "\n     ->withInput();";
+  $code .= "\n  return back()";
+  $code .= "\n     ->withErrors(\$validator->messages())";
+  $code .= "\n     ->withInput(\$request->input());";
   $code .= "\n}";
   $code .= "\n    \$" . $ControllerName . "->update();";
+  $code .= "\n   return redirect('/admin/".$ControllerName."');";
   $code .= "\n   }";
   $code .= "\n";
   $code .= "\n   /**";
@@ -300,7 +303,7 @@ function GenViewIndex($ModelName, $fields)
   $code = "";
   $code .= " @extends('layouts.admin')";
   $code .= "\n @section('contenido')\n";
-  $code .= "<div class=\"row\"><button class=\"btn btn-success\" onclick=\"window.location.assign('/" . str_replace("_", "", $ModelName) . "/create')\">Agregar</button></div>";
+  $code .= "<div class=\"row\"><button class=\"btn btn-success\" onclick=\"window.location.assign('/admin/" . str_replace("_", "", $ModelName) . "/create')\">Agregar</button></div>";
   $code .= "\n <table class=\"table table-bordered table-striped table-sm\">";
   $code .= "\n        <thead>";
   $code .= "\n        <tr>";
@@ -316,7 +319,7 @@ function GenViewIndex($ModelName, $fields)
   $code .= "\n    @foreach(\$" . ucfirst(str_replace("_", "", $ModelName)) . "List as \$row)";
   $code .= "\n            <tr>";
   $code .= "\n                <td>";
-  $code .= "\n                    <a href=\"/" . $ModelName . "/edit/{{\$row->id}}\" title=\"Editar " . str_replace("_", "", $ModelName) . "\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
+  $code .= "\n                    <a href=\"/admin/" . $ModelName . "/edit/{{\$row->id}}\" title=\"Editar " . str_replace("_", "", $ModelName) . "\" class=\"btn btn-xs btn-outline-primary\"><i class=\"fas fa-edit\"></i></a>";
   $code .= "\n                    <a href=\"#\" class=\"btn btn-xs btn-outline-danger\" title=\"Borrar " . $ModelName . "\" onclick=\"delete" . ucfirst(str_replace("_", "", $ModelName)) . "({{\$row->id}})\"><i class=\"fas fa-trash-alt\"></i></a>";
   $code .= "\n                </td>";
   foreach ($fields as $fld) {
@@ -347,7 +350,7 @@ function GenViewIndex($ModelName, $fields)
   $code .= "\n                cancelButtonText: 'Cancelar'";
   $code .= "\n            }).then((result) => {";
   $code .= "\n                if (result.value) {";
-  $code .= "\n                    \$.post('/" . str_replace("_", "", $ModelName) . "/delete/'+id,{\"_token\": \$('meta[name=\"csrf_token\"]').attr('content'),\"_method\":\"delete\"},function(){";
+  $code .= "\n                    \$.post('/admin/" . str_replace("_", "", $ModelName) . "/delete/'+id,{\"_token\": \$('meta[name=\"csrf_token\"]').attr('content'),\"_method\":\"delete\"},function(){";
   $code .= "\n                        Swal.fire(";
   $code .= "\n                            'Borrado!',";
   $code .= "\n                            '" . $ModelName . " borrado.',";
@@ -377,14 +380,14 @@ function GenViewEdit($ModelName, $fields)
   $code .= "\n@if (\$errors->any())";
   $code .= "\n<div class=\"alert alert-danger\">";
   $code .= "\n<strong>Whoops!</strong> Hay error en los datos de entrada<br><br>";
-  $code .= "\n<ul>";
-  $code .= "\n    @foreach (\$errors->all() as \$error)";
-  $code .= "\n<li>\{\{ \$error \}\}</li>";
-  $code .= "\n    @endforeach";
-  $code .= "\n</ul>";
+  //$code .= "\n<ul>";
+  //$code .= "\n    @foreach (\$errors->all() as \$error)";
+  //$code .= "\n<li>{{ \$error }}</li>";
+  //$code .= "\n    @endforeach";
+  //$code .= "\n</ul>";
   $code .= "\n</div>";
   $code .= "\n@endif";
-  $code .= "\n<form class= \"form-horizontal\" action=\"{{ route('" . $ModelName . ".update',\$" . ucfirst(str_replace("_", "", $ModelName)) . "->id) }}\" method=\"POST\">";
+  $code .= "\n<form class= \"form-horizontal\" action=\"{{ route('" . $ModelName . ".update',\$" . ucfirst(str_replace("_", "", $ModelName)) . "->id) }}\" method=\"POST\" enctype=\"multipart/form-data\">";
   $code .= "\n@csrf";
   $code .= "\n@method('PATCH')";
   $code .= "\n<div class=\"card-body\">";
@@ -394,53 +397,77 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"text\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Image" || $fld->FormType == "File") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"file\"  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Password") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"password\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Email") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"email\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Date") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"date\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Number") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"number\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Radio") {
         $code .= "\n<div class=\"form-group\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\"> " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
           $k++;
         }
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Check") {
         $code .= "\n<div class=\"form-group\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> " . $valor->Label;
+          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} " . $valor->Label;
         }
         $code .= "\n</div>";
       }
@@ -448,18 +475,25 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"Radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> " . $valor->Label;
+          $code .= "\n<input type=\"Radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
         }
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Relation") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
+        $code .= "\n <option value=\"\">Selleccione una Opcion</option>";
         $code .= "\n @foreach(\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List as \$row )";
-        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
+        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'selected':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
         $code .= "\n @endforeach";
         $code .= "\n</SELECT>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
     }
@@ -491,14 +525,14 @@ function GenViewCreate($ModelName, $fields)
   $code .= "\n@if (\$errors->any())";
   $code .= "\n<div class=\"alert alert-danger\">";
   $code .= "\n<strong>Whoops!</strong> Hay error en los datos de entrada<br><br>";
-  $code .= "\n<ul>";
-  $code .= "\n    @foreach (\$errors->all() as \$error)";
-  $code .= "\n<li>\{\{ \$error \}\}</li>";
-  $code .= "\n    @endforeach";
-  $code .= "\n</ul>";
+  //$code .= "\n<ul>";
+  //$code .= "\n    @foreach (\$errors->all() as \$error)";
+  //$code .= "\n<li>{{ \$error }}</li>";
+  //$code .= "\n    @endforeach";
+  //$code .= "\n</ul>";
   $code .= "\n</div>";
   $code .= "\n@endif";
-  $code .= "\n<form class= \"form-horizontal\" action=\"{{ route('" . $ModelName . ".create') }}\" method=\"POST\">";
+  $code .= "\n<form class= \"form-horizontal\" action=\"{{ route('" . $ModelName . ".create') }}\" method=\"POST\" method=\"POST\" enctype=\"multipart/form-data\">";
   $code .= "\n@csrf";
   $code .= "\n<div class=\"card-body\">";
   foreach ($fields as $fld) {
@@ -507,53 +541,77 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"text\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Password") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"password\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n</div>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "@endif";
+$code .= "\n</div>";
       }
       if ($fld->FormType == "Image" || $fld->FormType == "File") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"file\"  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Email") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"email\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Date") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"date\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Number") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"number\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Radio") {
         $code .= "\n<div class=\"form-group\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\"> " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
           $k++;
         }
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Check") {
         $code .= "\n<div class=\"form-group\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> " . $valor->Label;
+          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
         }
         $code .= "\n</div>";
       }
@@ -561,18 +619,25 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }}> " . $valor->Label;
         }
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Relation") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
+        $code .= "\n <option value=\"\">Selleccione una Opcion</option>";
         $code .= "\n @foreach(\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List as \$row )";
-        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
+        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'selected':'') }}>{{ \$row->" . $fld->FieldDisplay . "}}</option>";
         $code .= "\n @endforeach";
         $code .= "\n</SELECT>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
         $code .= "\n</div>";
       }
     }
@@ -605,11 +670,11 @@ function picture()
   echo "\n                            %@@@&&@@@@&@@@@@@@@@&";
   echo "\n                          &@@@&&@@@@@@@@@@@@@@@@@@@&";
   echo "\n                        &@&@&@@@@@@@@@@@@@@@@@@@@@@@@#";
-  echo "\n                      *@@&@&&&&%%#####%%#%#%%%&&&&@@@@&";
+  echo "\n                      *@@&@&&&&%%#####%%#%#%%%&&&&@@@@&"; 
   echo "\n                     ,&@&@&&##(((((((((########%%%&&&@@&";
-  echo "\n                     /@&%%###((################%%%%&@@@@%  ";
+  echo "\n                     /@&%%###((################%%%%&@@@@%";
   echo "\n                    .&&&%%####((((/((((((((###%%%%%%&@@@&.";
-  echo "\n                     &&&%&##&&@&@&&&&#((#&&&%%#%%&&&%%@@% ";
+  echo "\n                     &&&%&##&&@&@&&&&#((#&&&%%#%%&&&%%@@%";
   echo "\n                     /&&&((%#O&%&&%###(#%&&/#@#&O%%%%%@(";
   echo "\n                     *&&#(###############%&%%#%%%%%%%%%&%@";
   echo "\n                    ,((%#(#(((((((((((((##%%########%%%&%&";
