@@ -402,6 +402,15 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
+      if ($fld->FormType == "TextArea") {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<textarea row=\"4\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}</textarea>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
+        $code .= "\n</div>";
+    }      
       if ($fld->FormType == "Image" || $fld->FormType == "File") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
@@ -496,6 +505,27 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
+      if ($fld->FormType == "List") {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
+        $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k = 0;
+        $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
+        $code .= "\n <option value=\"\">Seleccione una Opcion</option>";
+        foreach ($fld->Values as $valor) {
+            $code .= "\n <option value=\"$valor->Value\" {{ (\"$valor->Value\" == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'selected':'') }} >$valor->Label</option>";
+            $k++;
+        }
+        $code .= "\n</SELECT>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
+        $code .= "\n</div>";
+
+    }
+
     }
   }
   $code .= "\n<a class=\"btn btn-secondary\" href=\"{{ route('" . $ModelName . ".index') }}\"> Regresar</a>";
@@ -525,11 +555,6 @@ function GenViewCreate($ModelName, $fields)
   $code .= "\n@if (\$errors->any())";
   $code .= "\n<div class=\"alert alert-danger\">";
   $code .= "\n<strong>Whoops!</strong> Hay error en los datos de entrada<br><br>";
-  //$code .= "\n<ul>";
-  //$code .= "\n    @foreach (\$errors->all() as \$error)";
-  //$code .= "\n<li>{{ \$error }}</li>";
-  //$code .= "\n    @endforeach";
-  //$code .= "\n</ul>";
   $code .= "\n</div>";
   $code .= "\n@endif";
   $code .= "\n<form class= \"form-horizontal\" action=\"{{ route('" . $ModelName . ".create') }}\" method=\"POST\" method=\"POST\" enctype=\"multipart/form-data\">";
@@ -546,7 +571,18 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
-      if ($fld->FormType == "Password") {
+ 
+      if ($fld->FormType == "TextArea") {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $code .= "\n<textarea  row=\"4\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\"></textarea>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
+        $code .= "\n</div>";
+    }
+
+  if ($fld->FormType == "Password") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"password\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
@@ -640,6 +676,27 @@ $code .= "\n</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
+      if ($fld->FormType == "List") {
+        $code .= "\n<div class=\"form-group\">";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
+        $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k = 0;
+        $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
+        $code .= "\n <option value=\"\">Seleccione una Opcion</option>";
+        foreach ($fld->Values as $valor) {
+            $code .= "\n <option value=\"$valor->Value\" >$valor->Label</option>";
+            $k++;
+        }
+        $code .= "\n</SELECT>";
+        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@endif";
+        $code .= "\n</div>";
+
+    }
+
     }
   }
   $code .= "\n<a class=\"btn btn-secondary\" href=\"{{ route('" . $ModelName . ".index') }}\"> Regresar</a>";
@@ -757,9 +814,9 @@ if (count($Comandos) == 0) {
     exit(0);
   }
 
-  $dbconf = ENV_Parser(file_get_contents(".env"));
+  $dbconf   = ENV_Parser(file_get_contents(".env"));
   echo "\n No se encontro archivo de configuracion de la estructura de la base de datos....";
-  $db     = new readStructure();
+  $db       = new readStructure();
   $db->setDb($dbconf["DB_DATABASE"]);
   $db->setSrv($dbconf["DB_HOST"]);
   $db->setUsr($dbconf["DB_USERNAME"]);
