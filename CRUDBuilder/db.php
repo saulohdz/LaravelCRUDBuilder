@@ -78,7 +78,7 @@ class db {
 		}
 	}
 
-	public function execute($sql) {
+	public static function execute($sql) {
 		return mysqli_query($this->conn, $sql);
 	}
 }

@@ -188,7 +188,7 @@ function GenController($ControllerName, $fields)
     $code .= "\n     \$" . $ControllerName . "->" . $fld->FieldName . " = \$request->" . $fld->FieldName . ";";
   }
   $code .= "\n    \$" . $ControllerName . "->save();";
-  $code .= "\n   return redirect('/admin/".$ControllerName."');";
+  $code .= "\n   return redirect('/admin/" . $ControllerName . "');";
   $code .= "\n   }";
   $code .= "\n   ";
   $code .= "\n";
@@ -255,7 +255,7 @@ function GenController($ControllerName, $fields)
   $code .= "\n     ->withInput(\$request->input());";
   $code .= "\n}";
   $code .= "\n    \$" . $ControllerName . "->update();";
-  $code .= "\n   return redirect('/admin/".$ControllerName."');";
+  $code .= "\n   return redirect('/admin/" . $ControllerName . "');";
   $code .= "\n   }";
   $code .= "\n";
   $code .= "\n   /**";
@@ -324,10 +324,10 @@ function GenViewIndex($ModelName, $fields)
   $code .= "\n                </td>";
   foreach ($fields as $fld) {
     if ($fld->ShowInList == "" || $fld->ShowInList == true) {
-      if ($fld->FormType=='Relation'){
-        $code .= "\n                <td>{{\$row->REL_" . $fld->TableRel . "->".$fld->FieldDisplay."}}</td>";
+      if ($fld->FormType == 'Relation') {
+        $code .= "\n                <td>{{\$row->REL_" . $fld->TableRel . "->" . $fld->FieldDisplay . "}}</td>";
       } else {
-         $code .= "\n                <td>{{\$row->" . $fld->FieldName . "}}</td>";
+        $code .= "\n                <td>{{\$row->" . $fld->FieldName . "}}</td>";
       }
     }
   }
@@ -397,8 +397,8 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"text\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -406,17 +406,17 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<textarea row=\"4\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}</textarea>";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
-    }      
+      }
       if ($fld->FormType == "Image" || $fld->FormType == "File") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"file\"  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -424,8 +424,8 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"password\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -433,8 +433,8 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"email\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -442,8 +442,8 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"date\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -451,32 +451,32 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"number\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Radio") {
         $code .= "\n<div class=\"form-group\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
           $k++;
         }
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Check") {
         $code .= "\n<div class=\"form-group\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} " . $valor->Label;
+          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} " . $valor->Label;
         }
         $code .= "\n</div>";
       }
@@ -484,10 +484,10 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"Radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
+          $code .= "\n<input type=\"Radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
         }
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -497,35 +497,33 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n <option value=\"\">Selleccione una Opcion</option>";
         $code .= "\n @foreach(\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List as \$row )";
-        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'selected':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
+        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->" . $fld->FieldRel . "== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'selected':'') }} >{{ \$row->" . $fld->FieldDisplay . "}}</option>";
         $code .= "\n @endforeach";
         $code .= "\n</SELECT>";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "List") {
         $code .= "\n<div class=\"form-group\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n <option value=\"\">Seleccione una Opcion</option>";
         foreach ($fld->Values as $valor) {
-            $code .= "\n <option value=\"$valor->Value\" {{ (\"$valor->Value\" == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'selected':'') }} >$valor->Label</option>";
-            $k++;
+          $code .= "\n <option value=\"$valor->Value\" {{ (\"$valor->Value\" == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'selected':'') }} >$valor->Label</option>";
+          $k++;
         }
         $code .= "\n</SELECT>";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
-
-    }
-
+      }
     }
   }
   $code .= "\n<a class=\"btn btn-secondary\" href=\"{{ route('" . $ModelName . ".index') }}\"> Regresar</a>";
@@ -566,37 +564,37 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"text\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
- 
+
       if ($fld->FormType == "TextArea") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<textarea  row=\"4\" maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\"></textarea>";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
-    }
+      }
 
-  if ($fld->FormType == "Password") {
+      if ($fld->FormType == "Password") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"password\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "@endif";
-$code .= "\n</div>";
+        $code .= "\n</div>";
       }
       if ($fld->FormType == "Image" || $fld->FormType == "File") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"file\"  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -604,8 +602,8 @@ $code .= "\n</div>";
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"email\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -613,8 +611,8 @@ $code .= "\n</div>";
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"date\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -622,32 +620,32 @@ $code .= "\n</div>";
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $code .= "\n<input type=\"number\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Radio") {
         $code .= "\n<div class=\"form-group\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
           $k++;
         }
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Check") {
         $code .= "\n<div class=\"form-group\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }} > " . $valor->Label;
+          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
         }
         $code .= "\n</div>";
       }
@@ -655,10 +653,10 @@ $code .= "\n</div>";
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (".$valor->Value." == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'checked':'') }}> " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }}> " . $valor->Label;
         }
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
@@ -668,35 +666,33 @@ $code .= "\n</div>";
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n <option value=\"\">Selleccione una Opcion</option>";
         $code .= "\n @foreach(\$" . ucfirst(str_replace("_", "", $fld->TableRel)) . "List as \$row )";
-        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->".$fld->FieldRel."== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName ."?'selected':'') }}>{{ \$row->" . $fld->FieldDisplay . "}}</option>";
+        $code .= "\n <option value=\"{{\$row->" . $fld->FieldRel . "}}\" {{ (\$row->" . $fld->FieldRel . "== \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'selected':'') }}>{{ \$row->" . $fld->FieldDisplay . "}}</option>";
         $code .= "\n @endforeach";
         $code .= "\n</SELECT>";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
       if ($fld->FormType == "List") {
         $code .= "\n<div class=\"form-group\">";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n <option value=\"\">Seleccione una Opcion</option>";
         foreach ($fld->Values as $valor) {
-            $code .= "\n <option value=\"$valor->Value\" >$valor->Label</option>";
-            $k++;
+          $code .= "\n <option value=\"$valor->Value\" >$valor->Label</option>";
+          $k++;
         }
         $code .= "\n</SELECT>";
-        $code .= "\n@if(\$errors->has('".$fld->FieldName."'))";
-        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('".$fld->FieldName."') }}</div>";
+        $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
+        $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n</div>";
-
-    }
-
+      }
     }
   }
   $code .= "\n<a class=\"btn btn-secondary\" href=\"{{ route('" . $ModelName . ".index') }}\"> Regresar</a>";
@@ -727,7 +723,7 @@ function picture()
   echo "\n                            %@@@&&@@@@&@@@@@@@@@&";
   echo "\n                          &@@@&&@@@@@@@@@@@@@@@@@@@&";
   echo "\n                        &@&@&@@@@@@@@@@@@@@@@@@@@@@@@#";
-  echo "\n                      *@@&@&&&&%%#####%%#%#%%%&&&&@@@@&"; 
+  echo "\n                      *@@&@&&&&%%#####%%#%#%%%&&&&@@@@&";
   echo "\n                     ,&@&@&&##(((((((((########%%%&&&@@&";
   echo "\n                     /@&%%###((################%%%%&@@@@%";
   echo "\n                    .&&&%%####((((/((((((((###%%%%%%&@@@&.";
