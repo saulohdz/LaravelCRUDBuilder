@@ -12,7 +12,7 @@ class readStructure extends dbStructure
     public function readStructure()
     {
         $this->getConn();
-        $Tbllist = $this::execute("show full tables where Table_Type != 'VIEW'");
+        $Tbllist = $this->execute("show full tables where Table_Type != 'VIEW'");
         $strResponse = "{\"Database\":\"".$this->getDb()."\",\"DatabaseType\":\"MySql\",\"host\":\"".$this->srv."\",\"dbuser\":\"".$this->usr."\",\"dbpassword\":\"".$this->pass."\",\"Tables\":[";
         $c = 1;
         while ($filatables = mysqli_fetch_array($Tbllist)) {
@@ -20,7 +20,7 @@ class readStructure extends dbStructure
                 $strResponse .= "},";
             }
             $strResponse .= "{\"TableName\":\"" . $filatables[0] . "\",";
-            $fldsqry = $this::execute("SELECT * FROM " . $filatables[0]);
+            $fldsqry = $this->execute("SELECT * FROM " . $filatables[0]);
             $fields = mysqli_fetch_fields($fldsqry);
             $strResponse .= "\"config\": {\n";
             $strResponse .= "\"editPage\": \"upd_" . $filatables[0] . ".php\"\n,";

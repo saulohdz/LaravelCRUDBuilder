@@ -326,7 +326,23 @@ function GenViewIndex($ModelName, $fields)
     if ($fld->ShowInList == "" || $fld->ShowInList == true) {
       if ($fld->FormType == 'Relation') {
         $code .= "\n                <td>{{\$row->REL_" . $fld->TableRel . "->" . $fld->FieldDisplay . "}}</td>";
-      } else {
+      } elseif($fld->FormType=='List' || $fld->FormType=='Radio' || $fld->FormType=='Check'){
+            echo "\n@php";
+            echo "\n \$Valores=".json_decode($fld->Values).";";
+            echo "\n foreach(\$valores as \$v){";
+            echo "\n  if (\$v->Value==\$row->".$fld->FieldName."){";
+            echo "\n    \$Etiqueta=\$v->Label;";
+            echo "\n    \$Icon=\$v->Icon;";
+            echo "\n   }";
+            echo "\n @endphp";
+            if ($fld->ViewIcon){
+              $code .= "\n                <td>{{\$Etiqueta}} <img src=\"{{\$Icon}}\"></td>"; 
+            }
+            else{
+              $code .= "\n                <td>{{\$Etiqueta}}</td>";
+          }
+       }
+      else {
         $code .= "\n                <td>{{\$row->" . $fld->FieldName . "}}</td>";
       }
     }

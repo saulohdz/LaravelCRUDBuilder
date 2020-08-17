@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Saulo
@@ -6,7 +7,8 @@
  * Time: 11:29 PM
  */
 
-class db {
+class db
+{
 	protected $encryption = "md5";
 	protected $srv = "localhost";
 	protected $port = 3306;
@@ -15,61 +17,75 @@ class db {
 	protected $db = "saludiglesia";
 	private $conn;
 
-	function setSrv($srv) {
+	function setSrv($srv)
+	{
 		$this->srv = $srv;
 	}
 
-	function setUsr($usr) {
+	function setUsr($usr)
+	{
 		$this->usr = $usr;
 	}
 
-	function setPass($pass) {
+	function setPass($pass)
+	{
 		$this->pass = $pass;
 	}
 
-	function setDb($db) {
+	function setDb($db)
+	{
 		$this->db = $db;
 	}
 
-	function getEncryption() {
+	function getEncryption()
+	{
 		return $this->encryption;
 	}
 
-	function getPort() {
+	function getPort()
+	{
 		return $this->port;
 	}
 
-	function setEncryption($encryption) {
+	function setEncryption($encryption)
+	{
 		$this->encryption = $encryption;
 	}
 
-	function setPort($port) {
+	function setPort($port)
+	{
 		$this->port = $port;
 	}
 
-	function getDb() {
+	function getDb()
+	{
 		return $this->db;
 	}
 
-	function getUsr() {
+	function getUsr()
+	{
 		return $this->usr;
 	}
 
-	function getPass() {
+	function getPass()
+	{
 		return $this->pass;
 	}
 
-	function getSrv() {
+	function getSrv()
+	{
 		return $this->srv;
 	}
 
-	private function connect() {
+	private function connect()
+	{
 		$this->conn = mysqli_connect($this->srv, $this->usr, $this->pass, $this->db);
 	}
 	/**
 	 * @return mixed
 	 */
-	public function getConn() {
+	public function getConn()
+	{
 		if (!isset($this->conn)) {
 			$this->connect();
 			return $this->conn;
@@ -78,7 +94,8 @@ class db {
 		}
 	}
 
-	public static function execute($sql) {
+	public function execute($sql)
+	{
 		return mysqli_query($this->conn, $sql);
 	}
 }
