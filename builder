@@ -327,15 +327,22 @@ function GenViewIndex($ModelName, $fields)
       if ($fld->FormType == 'Relation') {
         $code .= "\n                <td>{{\$row->REL_" . $fld->TableRel . "->" . $fld->FieldDisplay . "}}</td>";
       } elseif($fld->FormType=='List' || $fld->FormType=='Radio' || $fld->FormType=='Check'){
-            echo "\n@php";
-            echo "\n \$Valores=".json_decode($fld->Values).";";
-            echo "\n foreach(\$valores as \$v){";
-            echo "\n  if (\$v->Value==\$row->".$fld->FieldName."){";
-            echo "\n    \$Etiqueta=\$v->Label;";
-            echo "\n    \$Icon=\$v->Icon;";
-            echo "\n   }";
-            echo "\n @endphp";
+            $code .= "\n@php";
+            $code .= "\n \$Valores=json_decode('".json_encode($fld->Values)."');";
+            $code .= "\n \$Icons=json_decode('".json_encode($fld->IconValues)."');";
+            $code .= "\n foreach(\$Valores as \$v){";
+            $code .= "\n  if (\$v->Value==\$row->".$fld->FieldName."){";
+            $code .= "\n    \$Etiqueta=\$v->Label;";
+            $code .= "\n    \$Icon=\$v->Icon;";
+            $code .= "\n   }";
+            $code .= "\n @endphp";
             if ($fld->ViewIcon){
+              $code .= "\n@php";
+              $code .= "\n foreach(\$Icons as \$I){";
+                $code .= "\n  if (\$I->Value==\$row->".$fld->FieldName."){";
+                $code .= "\n    \$Icon=\$I->Icon;";
+                $code .= "\n   }";
+                $code .= "\n @endphp";
               $code .= "\n                <td>{{\$Etiqueta}} <img src=\"{{\$Icon}}\"></td>"; 
             }
             else{
