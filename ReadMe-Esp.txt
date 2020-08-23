@@ -27,6 +27,7 @@ for PHP Laravel Framework 5.8 and grather.
 HELP
 
  Builder for Laravel 7.0 by Saulo Hernandez O.                                                              
+ Basado en el template Adminlte V3 (copyright adminlte.io)
  ------------------------------------------------                                                           
  Command :  php builder |parameter #1 parameter #2 parameter #3|                                            
  Paramaters :                                                                                               
