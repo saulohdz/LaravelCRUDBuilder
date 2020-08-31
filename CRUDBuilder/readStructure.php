@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Saulo
@@ -9,11 +10,34 @@ require "dbStructure.php";
 require "Model.php";
 class readStructure extends dbStructure
 {
+
+    private function get_set_values($table, $field)
+    {
+        if (preg_match('/`/', $table) || preg_match('/\'/', $field)) {
+            return false;
+        }
+        //echo "\n SHOW COLUMNS FROM ".$table." LIKE '".$field."'";
+        $column = mysqli_fetch_array($this->execute("SHOW COLUMNS FROM " . $table . " LIKE '" . $field . "'"));
+        if (!preg_match('/^enum|set/', $column['Type'])) {
+            return false;
+        }
+        $vals = preg_replace('/(?:^enum|set)|\(|\)/', '', $column['Type']);
+        $values = explode(',', $vals);
+        if (!sizeof($values)) {
+            return false;
+        }
+        for ($i = 0; $i < sizeof($values); $i++) {
+            $values[$i] = preg_replace('/^\'|\'$/', '', $values[$i]);
+        }
+        return $values;
+    }
+
+
     public function readStructure()
     {
         $this->getConn();
         $Tbllist = $this->execute("show full tables where Table_Type != 'VIEW'");
-        $strResponse = "{\"Database\":\"".$this->getDb()."\",\"DatabaseType\":\"MySql\",\"host\":\"".$this->srv."\",\"dbuser\":\"".$this->usr."\",\"dbpassword\":\"".$this->pass."\",\"Tables\":[";
+        $strResponse = "{\"Database\":\"" . $this->getDb() . "\",\"DatabaseType\":\"MySql\",\"host\":\"" . $this->srv . "\",\"dbuser\":\"" . $this->usr . "\",\"dbpassword\":\"" . $this->pass . "\",\"Tables\":[";
         $c = 1;
         while ($filatables = mysqli_fetch_array($Tbllist)) {
             if ($c == 0) {
@@ -43,28 +67,28 @@ class readStructure extends dbStructure
                         break; //INT
                     case 253:
                         $frmType = "Text";
-                        break;//Varchar
+                        break; //Varchar
                     case 10:
                         $frmType = "Date";
-                        break;//Date
+                        break; //Date
                     case 246:
                         $frmType = "Money";
-                        break;//Decimal(12,2)
+                        break; //Decimal(12,2)
                     case 1:
                         $frmType = "Text";
-                        break;//tinyInt
+                        break; //tinyInt
                     case 8:
                         $frmType = "Text";
-                        break;//BIGINT
+                        break; //BIGINT
                     case 7:
                         $frmType = "DateTime";
-                        break;//DateTime
+                        break; //DateTime
                     case 4:
                         $frmType = "Float";
-                        break;//Double
+                        break; //Double
                     default:
                         $frmType = "Text";
-                        break;//Varchar
+                        break; //Varchar
                 }
                 $PK = ($valor->flags & 2 == 2 ? "true" : false);
                 $AI = ($valor->flags & 512 == 512 ? "true" : false);
@@ -78,7 +102,7 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"SubType\":\"\"\n";
                 $strResponse .= ",\"MultipleValues\":false\n";
                 $strResponse .= ",\"PackType\":\"\"\n";
-                $strResponse .= ",\"Label\":\"".$valor->name."\"\n";
+                $strResponse .= ",\"Label\":\"" . $valor->name . "\"\n";
                 $strResponse .= ",\"PK\":\"" . $PK . "\"\n";
                 $strResponse .= ",\"AI\":\"" . $AI . "\"\n";
                 $strResponse .= ",\"TableRel\":\"\"\n";
@@ -90,15 +114,31 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"UseCombo\":\"\"\n";
                 $strResponse .= ",\"Validation\":\"\"\n";
                 $strResponse .= ",\"ShowInList\":true\n";
-                $strResponse .= ",\"ShowInEdit\":".($AI=="true"?"false":"true")."\n";
-                $strResponse .= ",\"ShowInCreate\":".($AI=="true"?"false":"true")."\n";
+                $strResponse .= ",\"ShowInEdit\":" . ($AI == "true" ? "false" : "true") . "\n";
+                $strResponse .= ",\"ShowInCreate\":" . ($AI == "true" ? "false" : "true") . "\n";
                 $strResponse .= ",\"ShowInDetails\":\"\"\n";
                 $strResponse .= ",\"ReadOnly\":\"\"\n";
                 $strResponse .= ",\"Hidden\":false\n";
                 $strResponse .= ",\"Format\":\"\"\n";
                 $strResponse .= ",\"Width\":\"\"\n";
                 $strResponse .= ",\"Height\":\"\"\n";
-                $strResponse .= ",\"Values\":[]\n";
+                if ($valor->flags & 256 == 256 || $valor->flags & 2048 == 2048) {
+                    $enum = array();
+                    $Vals=$this->get_set_values($filatables[0], $valor->name);
+                    //echo "\n ".$filatables[0]." -> ".$valor->name;
+                    //print_r($Vals);
+                    if ($Vals){
+                    for($i=0; $i<count($Vals); $i++) {
+                        $enum[] =array("Label" => $Vals[$i], "Value" => $Vals[$i]);
+                    }
+                    $strResponse .= ",\"Values\":" . json_encode($enum) . "\n";
+                }
+                else{
+                    $strResponse .= ",\"Values\":[]\n";
+                }
+                } else {
+                    $strResponse .= ",\"Values\":[]\n";
+                }
                 $strResponse .= ",\"IconValues\":\"\"\n";
                 $strResponse .= ",\"FieldDbType\":\"" . $valor->type . "\"}";
                 if ($c2 != count($fields)) {
@@ -115,12 +155,13 @@ class readStructure extends dbStructure
 
 
 
- public function __construct(){
-    //parent::__construct($this::readStructure());
-    //$this::saveDbStrucuture("dbStructure.json");
+    public function __construct()
+    {
+        //parent::__construct($this::readStructure());
+        //$this::saveDbStrucuture("dbStructure.json");
     }
 
-/*
+    /*
 //$db  = new readStructure();
 $db2 = new dbStructure("");
 $db2->loadStructure("dbStructure.json");
