@@ -122,15 +122,16 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"Format\":\"\"\n";
                 $strResponse .= ",\"Width\":\"\"\n";
                 $strResponse .= ",\"Height\":\"\"\n";
-                if ($valor->flags & 256 == 256 || $valor->flags & 2048 == 2048) {
+                if ($valor->type == 254) {
                     $enum = array();
                     $Vals=$this->get_set_values($filatables[0], $valor->name);
                     //echo "\n ".$filatables[0]." -> ".$valor->name;
-                    //print_r($Vals);
+                    
                     if ($Vals){
                     for($i=0; $i<count($Vals); $i++) {
                         $enum[] =array("Label" => $Vals[$i], "Value" => $Vals[$i]);
                     }
+                    print_r($Vals);
                     $strResponse .= ",\"Values\":" . json_encode($enum) . "\n";
                 }
                 else{
