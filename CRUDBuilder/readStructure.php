@@ -140,6 +140,7 @@ class readStructure extends dbStructure
                 } else {
                     $strResponse .= ",\"Values\":[]\n";
                 }
+                $strResponse .= ",\"ViewIcon\":\"\"\n";
                 $strResponse .= ",\"IconValues\":\"\"\n";
                 $strResponse .= ",\"FieldDbType\":\"" . $valor->type . "\"}";
                 if ($c2 != count($fields)) {

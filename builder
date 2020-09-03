@@ -488,6 +488,9 @@ function GenViewEdit($ModelName, $fields)
         $k = 0;
         foreach ($fld->Values as $valor) {
           $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
           $k++;
         }
         $code .= "\n</div>";
@@ -498,16 +501,26 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k=0;
         foreach ($fld->Values as $valor) {
           $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"> {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} " . $valor->Label;
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
+          $k++;
         }
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Boolean") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k=0;
         foreach ($fld->Values as $valor) {
           $code .= "\n<input type=\"Radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
+          $k++;
         }
         $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
         $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
@@ -538,7 +551,10 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n<SELECT  name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" class=\"form-control\">";
         $code .= "\n <option value=\"\">Seleccione una Opcion</option>";
         foreach ($fld->Values as $valor) {
-          $code .= "\n <option value=\"$valor->Value\" {{ (\"$valor->Value\" == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'selected':'') }} >$valor->Label</option>";
+          $code .= "\n <option value=\"$valor->Value\" {{ (\"$valor->Value\" == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'selected':'') }} >$valor->Label </option>";
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
           $k++;
         }
         $code .= "\n</SELECT>";
@@ -657,6 +673,9 @@ function GenViewCreate($ModelName, $fields)
         $k = 0;
         foreach ($fld->Values as $valor) {
           $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
           $k++;
         }
         $code .= "\n</div>";
@@ -667,16 +686,26 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k=0;
         foreach ($fld->Values as $valor) {
           $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
+          $k++;
         }
         $code .= "\n</div>";
       }
       if ($fld->FormType == "Boolean") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
+        $k=0;
         foreach ($fld->Values as $valor) {
           $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }}> " . $valor->Label;
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }
+          $k++;
         }
         $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
         $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
@@ -708,6 +737,9 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n <option value=\"\">Seleccione una Opcion</option>";
         foreach ($fld->Values as $valor) {
           $code .= "\n <option value=\"$valor->Value\" >$valor->Label</option>";
+          if ($fld->ViewIcon){
+            $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
+          }  
           $k++;
         }
         $code .= "\n</SELECT>";
