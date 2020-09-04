@@ -96,7 +96,8 @@ Note: Put This file in new Laravel folder project
                     "Width": "",
                     "Heigth": "",
                     "Values": [],		 /* array json with values in Fields type Check, Radio, List  example -> [{"Label":"Admin","Value":true},{},{}]
-                    "IconValues": "",    /* array json with images related to values  in Fields type Check, Radio, List example ->[{"Value":true,"Icon":"/img/admin.png"},{}], and show  front value 
+                    "ViewIcon":false,    /*  if is true show the icon related to value
+                    "IconValues": [],    /* array json with images related to values  in Fields type Check, Radio, List example ->[{"Value":true,"Icon":"/img/admin.png"},{}], and show  front value 
                     "FieldDbType": "8"           --> Field Data base Type numeric
                 },
                 {
