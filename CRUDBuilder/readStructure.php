@@ -90,8 +90,8 @@ class readStructure extends dbStructure
                         $frmType = "Text";
                         break; //Varchar
                 }
-                $PK = ($valor->flags & 2 == 2 ? "true" : false);
-                $AI = ($valor->flags & 512 == 512 ? "true" : false);
+                $PK = ($valor->flags & 2 == 2 ? true : false);
+                $AI = ($valor->flags & 512 == 512 ? true : false);
                 $strResponse .= "{\"FieldName\":\"" . $valor->name . "\"\n";
                 $strResponse .= ",\"TableName\":\"" . $valor->table . "\"\n";
                 $strResponse .= ",\"LongMax\":\"" . $valor->max_length . "\"\n";
@@ -114,8 +114,8 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"UseCombo\":\"\"\n";
                 $strResponse .= ",\"Validation\":\"\"\n";
                 $strResponse .= ",\"ShowInList\":true\n";
-                $strResponse .= ",\"ShowInEdit\":" . ($AI == "true" ? "false" : "true") . "\n";
-                $strResponse .= ",\"ShowInCreate\":" . ($AI == "true" ? "false" : "true") . "\n";
+                $strResponse .= ",\"ShowInEdit\":" . ($AI ? "false" : "true") . "\n";
+                $strResponse .= ",\"ShowInCreate\":" . ($AI ? "false" : "true") . "\n";
                 $strResponse .= ",\"ShowInDetails\":\"\"\n";
                 $strResponse .= ",\"ReadOnly\":\"\"\n";
                 $strResponse .= ",\"Hidden\":false\n";
@@ -126,7 +126,7 @@ class readStructure extends dbStructure
                     $enum = array();
                     $Vals=$this->get_set_values($filatables[0], $valor->name);
                     //echo "\n ".$filatables[0]." -> ".$valor->name;
-                    
+
                     if ($Vals){
                     for($i=0; $i<count($Vals); $i++) {
                         $enum[] =array("Label" => $Vals[$i], "Value" => $Vals[$i]);

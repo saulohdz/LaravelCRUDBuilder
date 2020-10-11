@@ -72,11 +72,12 @@ Note: Put This file in new Laravel folder project
                     "Long": "20",                --> Long of Database Type 
                     "NumberCharSet": "63",       --> Char Set
                     "Flags": "36865",            --> Database Flags
-                    "FormType": "Text",          --> Form Input Type (Text, Date, Relation(Select2),Radio, Check, Boolean)
+                    "FormType": "Text",          --> Form Input Type (Text, Date, Relation(Select2),Radio, Check, Boolean,Email,List)
                     "SubType": "",		 --> Used with specified behavior of Formtype ()
                     "Label": "",		 --> Label show in Form
                     "PK": "true",		 --> Tthe field is PK = true or false
                     "AI": "true",                --> The Field is Auto Increment
+                    "Validation": "" ,/* laravel validation rules*/
                     "TableRel": "",		 --> This config is use with FormType=Relation, TableRel = Table related
                     "FieldRel": "",              --> This config is use with FormType=Relation, FielRel = Pk Field in Table ralated
                     "FieldDisplay": "",          --> Fiels displayed in result of relation
@@ -85,13 +86,16 @@ Note: Put This file in new Laravel folder project
                     "ChildDisplay": "",		 --> not used yet
                     "UseCombo": "",		 --> used if showing a Select Box with Result of relation
                     "ShowInList": "",		 --> If this field showing in index view
-                    "ShowInDetails": "",	 --> if this field showing in Details view in master detail view
+                    "ShowInDetails": "",	 --> if this field showing in Details view in master detail view (not yet used)
+                    "ShowInCreate": "",	 --> if this field showing in Details view create
+                    "ShowInEdit": "",	 --> if this field showing in Details view edit
                     "ReadOnly": "",		 --> If this field is read only in form
                     "Format": "",                --> Formating view of this field in index view
                     "Width": "",
                     "Heigth": "",
-                    "Values": "",		 --> not used yet
-                    "IconValues": "",		 --> not used yet
+                    "Values": [],		 /* array json with values in Fields type Check, Radio, List  example -> [{"Label":"Admin","Value":true},{},{}]
+                    "ViewIcon":false,    /*  if is true show the icon related to value
+                    "IconValues": [],    /* array json with images related to values  in Fields type Check, Radio, List example ->[{"Value":true,"Icon":"/img/admin.png"},{}], and show  front value 
                     "FieldDbType": "8"           --> Field Data base Type numeric
                 },
                 {
