@@ -70,6 +70,27 @@ function Logo()
   echo "\n ";
 }
 
+function LogoInFile()
+{
+  $code  = "\n";
+  $code += "\n██╗  ██╗██████╗  ██████╗ ███████╗ ██████╗ ██╗     ██╗   ██╗████████╗██╗ ██████╗ ███╗   ██╗███████╗";
+  $code += "\n██║  ██║██╔══██╗██╔════╝ ██╔════╝██╔═══██╗██║     ██║   ██║╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝";
+  $code += "\n███████║██████╔╝██║  ███╗███████╗██║   ██║██║     ██║   ██║   ██║   ██║██║   ██║██╔██╗ ██║███████╗";
+  $code += "\n██╔══██║██╔══██╗██║   ██║╚════██║██║   ██║██║     ██║   ██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║";
+  $code += "\n██║  ██║██║  ██║╚██████╔╝███████║╚██████╔╝███████╗╚██████╔╝   ██║   ██║╚██████╔╝██║ ╚████║███████║";
+  $code += "\n╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝";
+  $code += "\n";
+  $code += "\n";
+  $code += "\n LARAVEL 7.0";
+  $code += "\n   ____ ____  _   _ ____                                    _             ";
+  $code += "\n  / ___|  _ \| | | |  _ \    __ _  ___ _ __   ___ _ __ __ _| |_ ___  _ __ ";
+  $code += "\n | |   | |_) | | | | | | |  / _` |/ _ \ '_ \ / _ \ '__/ _` | __/ _ \| '__|";
+  $code += "\n | |___|  _ <| |_| | |_| | | (_| |  __/ | | |  __/ | | (_| | || (_) | |   ";
+  $code += "\n  \____|_| \_\\\\___/|____/   \__, |\___|_| |_|\___|_|  \__,_|\__\___/|_|   ";
+  $code += "\n                            |___/                                         ";
+  $code += "\n";
+  $code += "\n ";
+}
 function loadJsonConfig($filename)
 {
   /*
@@ -289,7 +310,7 @@ function genModel($ModelName, $fields)
   $code .= "\n    protected \$primaryKey = '" . $fields[0]->FieldName . "';";
 
   foreach ($fields as $fld) {
-    if ($fld->FormType === 'Relation') {
+    if ($fld->FormType === 'Relation' || ($fld->FormType === 'List' && $fld->TableRel!== '' && $fld->FieldRel!=='' && $fld->FieldDisplay!=='')) {
       $code .= "\n public function REL_" . $fld->TableRel . "(){";
       $code .= "\n    return \$this->hasOne('\\App\\" . ucfirst(str_replace("_", "", $fld->TableRel)) . "','" . $fld->FieldRel . "','id');";
       $code .= "\n }\n";
@@ -642,7 +663,7 @@ function GenViewCreate($ModelName, $fields)
       if ($fld->FormType == "Email") {
         $code .= "\n<div class=\"form-group\">";
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
-        $code .= "\n<input type=\"email\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\" value=\"{{ \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . " }}\" class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
+        $code .= "\n<input type=\"email\"  maxlength=\"" . $fld->Long . "\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "\"  class=\"form-control\" placeholder=\"" . $fld->FieldName . "\">";
         $code .= "\n@if(\$errors->has('" . $fld->FieldName . "'))";
         $code .= "\n<div class=\"alert-danger\">{{ \$errors->first('" . $fld->FieldName . "') }}</div>";
         $code .= "\n@endif";
@@ -674,7 +695,7 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k = 0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "_" . $k . "\" value=\"" . $valor->Value . "\" class=\"\" > " . $valor->Label;
           if ($fld->ViewIcon){
             $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
           }
@@ -690,7 +711,7 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k=0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }} > " . $valor->Label;
+          $code .= "\n<input type=\"checkbox\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\"  > " . $valor->Label;
           if ($fld->ViewIcon){
             $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
           }
@@ -703,7 +724,7 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n<label for=\"" . $fld->FieldName . "\" class=\"col-sm-4 control-label\">" . $fld->FieldName . "</label>";
         $k=0;
         foreach ($fld->Values as $valor) {
-          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" {{ (" . $valor->Value . " == \$" . ucfirst(str_replace("_", "", $ModelName)) . "->" . $fld->FieldName . "?'checked':'') }}> " . $valor->Label;
+          $code .= "\n<input type=\"radio\" name=\"" . $fld->FieldName . "\" id=\"" . $fld->FieldName . "[]\" value=\"" . $valor->Value . "\" class=\"\" > " . $valor->Label;
           if ($fld->ViewIcon){
             $code .= "\n <img src=\"".$fld->IconValues[$k]->Icon."\">";
           }
@@ -761,6 +782,63 @@ function GenViewCreate($ModelName, $fields)
 
   $code .= "\n@endsection";
   return  $code;
+}
+
+function GenMigration($ModelName,$fields,$timestamps=true){
+$code="";
+$code +="<?php\n";
+$code +="\n";
+$code +="\n use Illuminate\Database\Migrations\Migration;";
+$code +="\n use Illuminate\Database\Schema\Blueprint;";
+$code +="\n use Illuminate\Support\Facades\Schema;";
+$code +="\n";
+$code +="\n  class ".ucfirst($ModelName)." extends Migration";
+$code +="\n  {";
+$code +="\n      /**";
+$code +="\n       * Run the migrations.";
+$code +="\n       *";
+$code +="\n       * @return void";
+$code +="\n       */";
+$code +="\n      public function up()";
+$code +="\n      {";
+$code +="\n          Schema::create('".ucfirst($ModelName)."', function (Blueprint \$table) {";
+  foreach($fields as $fld){
+    switch($fld->FieldDbType){
+      case 8 : $code +="\n              \$table->bigIncrements('".$fld->FieldName."');";
+               break;
+      case 253 : $code +="\n              \$table->string('".$fld->FieldName."',".$fld->Long.");";
+               break;
+      case 3 : $code +="\n              \$table->integer('".$fld->FieldName."');";
+               break;
+      case 10 : $code +="\n              \$table->date('".$fld->FieldName."');";
+               break;
+      case 246 : $code +="\n              \$table->decimal('".$fld->FieldName."',10,2);";
+               break;
+      case 1 : $code +="\n              \$table->tinyInteger('".$fld->FieldName."');";
+               break;
+      case 252 : $code +="\n              \$table->text('".$fld->FieldName."');";
+               break;
+
+    }
+  }
+if ($timestamps){
+  $code +="\n              \$table->timestamps();";
+}
+$code +="\n          });";
+$code +="\n      }";
+$code +="\n";
+$code +="\n      /**";
+$code +="\n       * Reverse the migrations.";
+$code +="\n       *";
+$code +="\n       * @return void";
+$code +="\n       */";
+$code +="\n      public function down()";
+$code +="\n      {";
+$code +="\n          Schema::dropIfExists('".ucfirst($ModelName)."');";
+$code +="\n      }";
+$code +="\n  }";
+$code +="\n}";
+return $code;
 }
 
 function sign()
@@ -875,7 +953,7 @@ if (count($Comandos) == 0) {
   $db->setUsr($dbconf["DB_USERNAME"]);
   $db->setPass($dbconf["DB_PASSWORD"]);
   echo "\n Generando estructura automaticamente de la Base de datos " . $dbconf["DB_DATABASE"] . " en " . $dbconf["DB_HOST"];
-  echo "\n Leyendo informacion de el archico .env ....";
+  echo "\n Leyendo informacion de el archivo .env ....";
   $jsonConfig = json_decode($db->readStructure());
 }
 
@@ -900,6 +978,14 @@ foreach ($jsonConfig->Tables as $tbl) {
           fwrite($myfile, $data);
           fclose($myfile);
         }
+        if (strtoupper($mk) == 'MIGRATIONS') {
+          echo "\n Generando " . ucfirst($mk) . " de la Tabla " . $tbl->TableName;
+          $data = GenMigration($tbl->TableName, $tbl->fields);
+          $myfile = fopen("database/migratrions/create_" . $tbl->TableName . '.php', "w") or die("Unable to open file!");
+          fwrite($myfile, $data);
+          fclose($myfile);
+        }
+
         if (strtoupper($mk) == 'VIEW') {
           echo "\n Generando " . ucfirst($mk) . " de la Tabla " . $tbl->TableName;
           if (!file_exists('resources/views/' . str_replace("_", "", $tbl->TableName))) {
@@ -939,6 +1025,13 @@ foreach ($jsonConfig->Tables as $tbl) {
         echo "\n Generando " . ucfirst($mk) . " de la Tabla " . $tbl->TableName;
         $data = GenModel($tbl->TableName, $tbl->fields);
         $myfile = fopen("app/" . ucfirst(str_replace("_", "", $tbl->TableName)) . '.php', "w") or die("Unable to open file!");
+        fwrite($myfile, $data);
+        fclose($myfile);
+      }
+      if (strtoupper($mk) == 'MIGRATIONS') {
+        echo "\n Generando " . ucfirst($mk) . " de la Tabla " . $tbl->TableName;
+        $data = GenMigration($tbl->TableName, $tbl->fields);
+        $myfile = fopen("database/migratrions/create_" . $tbl->TableName . '.php', "w") or die("Unable to open file!");
         fwrite($myfile, $data);
         fclose($myfile);
       }
