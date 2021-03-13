@@ -90,8 +90,8 @@ class readStructure extends dbStructure
                         $frmType = "Text";
                         break; //Varchar
                 }
-                $PK = ($valor->flags & 2 == 2 ? true : false);
-                $AI = ($valor->flags & 512 == 512 ? true : false);
+                $PK = (($valor->flags & 2) == 2 ? true : false);
+                $AI = (($valor->flags & 512) == 512 ? true : false);
                 $strResponse .= "{\"FieldName\":\"" . $valor->name . "\"\n";
                 $strResponse .= ",\"TableName\":\"" . $valor->table . "\"\n";
                 $strResponse .= ",\"LongMax\":\"" . $valor->max_length . "\"\n";
@@ -110,6 +110,7 @@ class readStructure extends dbStructure
                 $strResponse .= ",\"FieldDisplay\":\"\"\n";
                 $strResponse .= ",\"ChildTable\":\"\"\n";
                 $strResponse .= ",\"IdParent\":\"\"\n";
+                $strResponse .= ",\"OnParent\":[{\"\":\"\"}]\n";
                 $strResponse .= ",\"ChildDisplay\":\"\"\n";
                 $strResponse .= ",\"UseCombo\":\"\"\n";
                 $strResponse .= ",\"Validation\":\"\"\n";

@@ -82,7 +82,21 @@ Note: Put This file in new Laravel folder project
                     "FieldRel": "",              --> This config is use with FormType=Relation, FielRel = Pk Field in Table ralated
                     "FieldDisplay": "",          --> Fiels displayed in result of relation
                     "ChildTable": "",		 --> not used yet
-                    "IdParent": "",		 --> not used yet
+                    "IdParent": "",		 --> field parent of current Field
+                    "OnParent":[]        -->  Events when parent trigger an event needed IdParent not null
+                                                example 
+                                                //Event ON change parent Fill HTML SELECT with values of table
+                                                    "OnParent": [
+                                                    {
+                                                        "event":"change","fnc": {
+                                                        "operation": "fillSelect",
+                                                        "table":"nacionalidades",
+                                                        "filter":[],
+                                                        "FieldValue": "id",
+                                                        "FieldLabel": "GENTILICIO_NAC"
+                                                        }
+                                                    }
+                                                    ]
                     "ChildDisplay": "",		 --> not used yet
                     "UseCombo": "",		 --> used if showing a Select Box with Result of relation
                     "ShowInList": "",		 --> If this field showing in index view
