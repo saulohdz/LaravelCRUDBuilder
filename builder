@@ -212,7 +212,7 @@ function GenController($ControllerName, $fields)
   $code .= "\n if (\$validator->fails()) {";
   $code .= "\n  return back()";
   $code .= "\n     ->withErrors(\$validator)";
-  $code .= "\n     ->withInput();";
+  $code .= "\n     ->withInput(\$request->input());";
   $code .= "\n}";
   $code .= "\n   \$" . $ControllerName . " = new " . ucfirst(str_replace("_", "", $ControllerName)) . ";";
   foreach ($fields as $fld) {
@@ -232,16 +232,14 @@ function GenController($ControllerName, $fields)
   $code .= "\n    */";
   $code .= "\n   public function show(\$id)";
   $code .= "\n   {";
-  $code .= "\n     if (\$id!='All') {";
-  $code .= "\n     \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::find(\$id);";
-  $code .= "\n   }";
-  $code .= "\n   else{";
-  $code .= "\n   {";
-  $code .= "\n     \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::All();";
-  $code .= "\n   }";
+  $code .= "\n      if (\$id!='All') {";
+  $code .= "\n        \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::find(\$id);";
+  $code .= "\n      }";
+  $code .= "\n      else{";
+  $code .= "\n        \$" . $ControllerName . " = " . ucfirst(str_replace("_", "", $ControllerName)) . "::All();";
+  $code .= "\n      }";
   $code .= "\n      return $" . $ControllerName . ";";
-  $code .= "\n   }";
-  $code .= "\n   }";
+  $code .= "\n    }";
   $code .= "\n";
   $code .= "\n";
   $code .= "\n   /**";
@@ -616,15 +614,15 @@ function GenViewEdit($ModelName, $fields)
       //generate JavaScript Ajax Events
       if (count($fld->OnParent)>0){
         foreach($fld->OnParent as $e){
-        $jsCode .="\n\$(\"#"+$fld->IdParent+"\").on(\"".$e->event."\",function(response){\n";
+        $jsCode .="\n \$(\"#".$fld->IdParent."\").on(\"".$e->event."\",function(response){\n";
           if ($e->fnc->operation == 'fillSelect'){
-              $jsCode .="\n \$.get(\"/admin/".$ModelName."/all\",{},function(response){";
-                $jsCode .="\n  \$(\"#".$fld->FieldName."\").empty()";
-                $jsCode .="\n  \$.each(response,function(inx,row){";
-                $jsCode .="\n     \$(\"#".$fld->FieldName."\").append(\"<option value=\""+row.".$e->fnc->FieldValue.">"\"+row.".$e->fnc->FieldLabel."+\"</option>\")";
+              $jsCode .="\n  \$.get(\"/admin/".$ModelName."/all\",{},function(response){";
+                $jsCode .="\n   \$(\"#".$fld->FieldName."\").empty()";
+                $jsCode .="\n   \$.each(response,function(inx,row){";
+                  $jsCode .="\n      \$(\"#".$fld->FieldName."\").append(\"<option value='\"+row.".$e->fnc->FieldValue."'>\"+row.".$e->fnc->FieldLabel."+\"</option>\")";
+                  $jsCode .="\n   })";
                 $jsCode .="\n  })";
-                $jsCode .="\n})";
-                $jsCode .="\n})";
+                $jsCode .="\n })";
           }
         }
        }//
@@ -817,12 +815,12 @@ function GenViewCreate($ModelName, $fields)
       }
       if (count($fld->OnParent)>0){
         foreach($fld->OnParent as $e){
-        $jsCode .="\n\$(\"#"+$fld->IdParent+"\").on(\"".$e->event."\",function(response){\n";
-          if ($e->fnc->operation == 'fillSelect'){
+          $jsCode .="\n \$(\"#".$fld->IdParent."\").on(\"".$e->event."\",function(response){\n";
+            if ($e->fnc->operation == 'fillSelect'){
               $jsCode .="\n \$.get(\"/admin/".$ModelName."/all\",{},function(response){";
                 $jsCode .="\n  \$(\"#".$fld->FieldName."\").empty()";
                 $jsCode .="\n  \$.each(response,function(inx,row){";
-                $jsCode .="\n     \$(\"#".$fld->FieldName."\").append(\"<option value=\""+row.".$e->fnc->FieldValue.">"\"+row.".$e->fnc->FieldLabel."+\"</option>\")";
+                $jsCode .="\n     \$(\"#".$fld->FieldName."\").append(\"<option value='\"+row.".$e->fnc->FieldValue."'>\"+row.".$e->fnc->FieldLabel."+\"</option>\")";
                 $jsCode .="\n  })";
                 $jsCode .="\n})";
                 $jsCode .="\n})";
@@ -904,7 +902,6 @@ function GenMigration($ModelName, $fields, $timestamps = true)
   $code .= "\n          Schema::dropIfExists('" . ucfirst($ModelName) . "');";
   $code .= "\n      }";
   $code .= "\n  }";
-  $code .= "\n}";
   return $code;
 }
 
