@@ -83,13 +83,17 @@ Note: Put This file in new Laravel folder project
                     "FieldDisplay": "",          --> Fiels displayed in result of relation
                     "ChildTable": "",		 --> not used yet
                     "IdParent": "",		 --> field parent of current Field
-                    "OnParent":[]        -->  Events when parent trigger an event needed IdParent not null
+                    "Events":[]        -->  Events when parent trigger an event needed IdParent not null
                                                 example 
                                                 //Event ON change parent Fill HTML SELECT with values of table
-                                                    "OnParent": [
+                                                    "Events": [
                                                     {
-                                                        "event":"change","fnc": {
-                                                        "operation": "fillSelect",
+                                                        "Event":"change","Function": {
+                                                        "Name": "fillSelect",
+                                                        "Ajax":true,
+                                                        "ControlType:"SELECT"...."TEXT","DIV","TEXTAREA","
+                                                        "ControlName":"ciuades",
+                                                        "Method":"get".."post".."delete".."patch"
                                                         "table":"nacionalidades",
                                                         "filter":[],
                                                         "FieldValue": "id",

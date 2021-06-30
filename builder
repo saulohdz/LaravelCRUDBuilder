@@ -612,8 +612,8 @@ function GenViewEdit($ModelName, $fields)
         $code .= "\n</div>";
       }
       //generate JavaScript Ajax Events
-      if (count($fld->OnParent)>0){
-        foreach($fld->OnParent as $e){
+      if (count($fld->Events)>0){
+        foreach($fld->Events as $e){
         $jsCode .="\n \$(\"#".$fld->IdParent."\").on(\"".$e->event."\",function(response){\n";
           if ($e->fnc->operation == 'fillSelect'){
               $jsCode .="\n  \$.get(\"/admin/".$ModelName."/all\",{},function(response){";
@@ -813,14 +813,14 @@ function GenViewCreate($ModelName, $fields)
         $code .= "\n@endif";
         $code .= "\n</div>";
       }
-      if (count($fld->OnParent)>0){
-        foreach($fld->OnParent as $e){
+      if (count($fld->Events)>0){
+        foreach($fld->Events as $e){
           $jsCode .="\n \$(\"#".$fld->IdParent."\").on(\"".$e->event."\",function(response){\n";
-            if ($e->fnc->operation == 'fillSelect'){
-              $jsCode .="\n \$.get(\"/admin/".$ModelName."/all\",{},function(response){";
-                $jsCode .="\n  \$(\"#".$fld->FieldName."\").empty()";
+            if ($e->Function->ControlType == 'SELECT'){
+              $jsCode .="\n \$".$e->Function->Method."(\"/admin/".$e->Function->table."/all\",{},function(response){";
+                $jsCode .="\n  \$(\"#".$e->Function->ControlName."\").empty()";
                 $jsCode .="\n  \$.each(response,function(inx,row){";
-                $jsCode .="\n     \$(\"#".$fld->FieldName."\").append(\"<option value='\"+row.".$e->fnc->FieldValue."'>\"+row.".$e->fnc->FieldLabel."+\"</option>\")";
+                $jsCode .= PHP_EOL.'     \$(\"#'.$e->Function->ControlName.'\").append(\"<option value=\"+row.'.$e->Function->FieldValue.'+\">\"+row.'.$e->Function->FieldLabel.'+\"</option>\")';
                 $jsCode .="\n  })";
                 $jsCode .="\n})";
                 $jsCode .="\n})";
@@ -1000,7 +1000,7 @@ if (count($Comandos) == 0) {
     echo "\n ** Generador de la Estructura de la BD JSON **";
     echo "\n Generando estructura automaticamente de la Base de datos " . $dbconf["DB_DATABASE"] . " en " . $dbconf["DB_HOST"];
     sleep(2);
-    $jsonConfig = $db->readStructure();
+    $jsonConfig = $db->readStructure($Comandos['tables'][0]=='ALL'?array():$Comandos['tables']);
     $myfile     = fopen($Comandos["GenStructure"][0], "w");
     fwrite($myfile, $jsonConfig);
     fclose($myfile);
