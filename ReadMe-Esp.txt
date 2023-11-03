@@ -29,13 +29,13 @@ HELP
  Builder for Laravel 7.0 by Saulo Hernandez O.                                                              
  Basado en el template Adminlte V3 (copyright adminlte.io)
  ------------------------------------------------                                                           
- Command :  php builder |parameter #1 parameter #2 parameter #3|                                            
+ Command :  php builder parameter #1 parameter #2 parameter #3                                            
  Paramaters :                                                                                               
-        GenStructure=file.json  -> genera el archivo JSON de la estructura de la BD, este comando se ejecuta
+        GenStructure=file.json  -> genera el archivo JSON de la estructura de la BD, este comando se ejecuta solo
         no se puede ejecutar junto con otros comandos                                                      
-        configfile=file.json file with the structure en database                                            
-        tables=| All | table 1,table 2,...,table n|  Tables what you want generate                          
-        make=|controller|,|model|,|view|,route| generate Controllers, Models, View and/or routes of tables 
+        configfile:file.json file with the structure en database use result of above command
+        tables:All |, table 1,table 2,...,table n|  Tables what you want generate                          
+        make:controller|,|model|,|view|,route| generate Controllers, Models, View and/or routes of tables 
 
 Note: Put This file in new Laravel folder project
 
