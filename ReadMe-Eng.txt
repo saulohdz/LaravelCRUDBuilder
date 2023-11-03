@@ -30,14 +30,14 @@ HELP
 
  Based in AdminLTE V3 template  (copyright adminlte.io)                                                            
  ------------------------------------------------                                                           
- Command :  php builder |parameter #1 parameter #2 parameter #3|                                            
+ Command :  php builder parameter #1 parameter #2 parameter #3                                            
  Paramaters :                                                                                               
         GenStructure=file.json  -> generate file JSON if database structure based in .ENV file , this command execute alone
         and not execute together whit the other commands                                                      
-        configfile=file.json file with the structure en database generated                                            
-        tables=| All  or  table 1,table 2,...,table n|  Tables that you want generate                          
-        make=|controller,|model,|view,route generate Controllers, Models, View and/or routes of tables
-         (genrate file webroutes.php, this file maybe included in web.php)
+        configfile:file.json file with the structure en database generated                                            
+        tables:| All  or  table 1,table 2,...,table n|  Tables that you want generate                          
+        make:controller|,model,|view,|route|migrations "generate Controllers, Models, View, Migartions and/or routes of tables"
+         (generate file webroutes.php, this file maybe included in web.php)
 
 Note: Put This file in new Laravel folder project
 
