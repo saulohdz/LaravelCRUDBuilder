@@ -40,10 +40,10 @@ class readStructure extends dbStructure
         $strResponse = "{\"Database\":\"" . $this->getDb() . "\",\"DatabaseType\":\"MySql\",\"host\":\"" . $this->srv . "\",\"dbuser\":\"" . $this->usr . "\",\"dbpassword\":\"" . $this->pass . "\",\"Tables\":[";
         $c = 1;
         while ($filatables = mysqli_fetch_array($Tbllist)) {
-            if ($c == 0) {
-                $strResponse .= "},";
-            }
             if (in_array($filatables[0], $tables) || count($tables) == 0) {
+                if ($c == 0) {
+                    $strResponse .= "},";
+                }
                 $strResponse .= "{\"TableName\":\"" . $filatables[0] . "\",";
                 $fldsqry = $this->execute("SELECT * FROM " . $filatables[0]);
                 $fields = mysqli_fetch_fields($fldsqry);
