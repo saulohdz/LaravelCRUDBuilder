@@ -5,6 +5,7 @@
  * Date: 22/10/2018
  * Time: 10:59 PM
  */
+
 require "db.php";
 class dbStructure extends db
 {

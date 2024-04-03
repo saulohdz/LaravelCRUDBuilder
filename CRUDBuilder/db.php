@@ -10,6 +10,7 @@
 class db
 {
 	protected $encryption = "md5";
+    protected $type = "mysql";
 	protected $srv = "localhost";
 	protected $port = 3306;
 	protected $usr = "root";
